@@ -29,7 +29,7 @@
 
 @interface RegisterViewController ()<UITextFieldDelegate, UIDocumentPickerDelegate>
 
-@property (strong, nonatomic) id<MKMPrivateKey> SK;
+@property (strong, nonatomic) id<MKPrivateKey> SK;
 @property (strong, nonatomic) id<MKMMeta> meta;
 @property (strong, nonatomic) id<MKMID> ID;
 
@@ -200,13 +200,13 @@
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     id<MKMUser> user = facebook.currentUser;
-    id<MKMID> ID = user.ID;
+    id<MKMID> ID = user.identifier;
     
     id<MKMVisa> visa = user.visa;
     
     if (self.imageData != nil) {
         
-        NSString *filename = [MKMHexEncode(MKMMD5Digest(self.imageData)) stringByAppendingPathExtension:@"jpeg"];
+        NSString *filename = [MKHexEncode(MKMD5Digest(self.imageData)) stringByAppendingPathExtension:@"jpeg"];
         
         // save to local storage
         [facebook saveAvatar:self.imageData name:filename forID:ID];
@@ -216,17 +216,17 @@
         NSURL *url = [ftp uploadAvatar:self.imageData filename:filename sender:ID];
         
         // got avatar URL
-        visa.avatar = MKMPortableNetworkFileParse(NSStringFromURL(url));
+        visa.avatar = MKPortableNetworkFileParse(NSStringFromURL(url));
     }
     
     [visa setName:self.nickname];
     
     id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-    id<MKMSignKey> SK = [dataSource privateKeyForVisaSignature:user.ID];
-    NSAssert(SK, @"failed to get visa sign key for user: %@", user.ID);
+    id<MKSignKey> SK = [dataSource getPrivateKeyForVisaSignature:user.identifier];
+    NSAssert(SK, @"failed to get visa sign key for user: %@", user.identifier);
     [visa sign:SK];
     
-    [facebook saveDocument:visa];
+    [facebook.archivist saveDocument:visa];
     
     // submit to station
     DIMSharedMessenger *messenger = [DIMGlobal messenger];
@@ -244,12 +244,12 @@
     DIMRegister *reg = [[DIMRegister alloc] initWithDatabase:adb];
     id<MKMID> ID = [reg createUserWithName:self.nickname avatar:nil];
     
-    id<MKMSignKey> SK = [facebook privateKeyForVisaSignature:ID];
-    id<MKMUser> user = [facebook userWithID:ID];
+    id<MKSignKey> SK = [facebook getPrivateKeyForVisaSignature:ID];
+    id<MKMUser> user = [facebook getUser:ID];
     facebook.currentUser = user;
 
     // 1. generated private key
-    self.SK = (id<MKMPrivateKey>)SK;
+    self.SK = (id<MKPrivateKey>)SK;
     if (self.SK == nil) {
         return [NSError errorWithDomain:@"chat.dim" code:1 userInfo:@{NSLocalizedDescriptionKey: @"Can not generate private key"}];
     }
@@ -261,7 +261,7 @@
     }
 
     // 3. generated ID
-    self.ID = user.ID;
+    self.ID = user.identifier;
     if (self.ID == nil) {
         return [NSError errorWithDomain:@"chat.dim" code:1 userInfo:@{NSLocalizedDescriptionKey: @"Can not generate ID"}];
     }

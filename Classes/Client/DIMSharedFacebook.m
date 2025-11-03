@@ -73,7 +73,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
 // Override
 - (NSArray<id<MKMUser>> *)localUsers {
     if (!_allUsers) {
-        NSArray<id<MKMUser>> *users = [super localUsers];
+        NSArray<id<MKMID>> *users = [self.archivist localUsers];
         if (users) {
             _allUsers = (NSMutableArray<id<MKMUser>> *)users;
         } else {
@@ -86,7 +86,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
 // Override
 - (void)setCurrentUser:(id<MKMUser>)currentUser {
     id<DIMUserTable> table = (id<DIMUserTable>)[self.archivist database];
-    [table setCurrentUser:currentUser.ID];
+    [table setCurrentUser:currentUser.identifier];
     // clear cache for reload
     [_allUsers removeAllObjects];
     [super setCurrentUser:currentUser];
@@ -96,7 +96,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
 - (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
     UserList *contacts = [_userContacts objectForKey:user];
     if (!contacts) {
-        contacts = (UserList *)[super contactsOfUser:user];
+        contacts = (UserList *)[self.archivist contactsOfUser:user];
         if (!contacts) {
             // placeholder
             contacts = [[NSMutableArray alloc] init];
@@ -111,13 +111,13 @@ typedef NSMutableArray<id<MKMID>> UserList;
 @implementation DIMSharedFacebook (User)
 
 - (OKPair<NSString *, NSString *> *)avatarForUser:(id<MKMID>)user {
-    id<MKMPortableNetworkFile> avatar;
-    id<MKMDocument> doc = [self documentForID:user withType:@"*"];
+    id<MKPortableNetworkFile> avatar;
+    id<MKMDocument> doc = [self getDocument:user withType:@"*"];
     if (doc) {
         if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
             avatar = [(id<MKMVisa>)doc avatar];
         } else {
-            avatar = MKMPortableNetworkFileParse([doc propertyForKey:@"avatar"]);
+            avatar = MKPortableNetworkFileParse([doc propertyForKey:@"avatar"]);
         }
     }
     // TODO: encode data? encrypted file?
@@ -133,7 +133,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
     return [[OKPair alloc] initWithFirst:path second:url];
 }
 
-- (BOOL)savePrivateKey:(id<MKMPrivateKey>)SK
+- (BOOL)savePrivateKey:(id<MKPrivateKey>)SK
               withType:(NSString *)type
                forUser:(id<MKMID>)user {
     id<DIMAccountDBI> db = [self.archivist database];

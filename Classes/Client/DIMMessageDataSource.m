@@ -81,7 +81,7 @@ OKSingletonImplementations(DIMMessageDataSource, sharedInstance)
     DIMFacebook *facebook = [DIMGlobal facebook];
     if (MKMIDIsUser(ID)) {
         // check user
-        if (![facebook publicKeyForEncryption:ID]) {
+        if (![facebook getPublicKeyForEncryption:ID]) {
             NSLog(@"user not ready yet: %@", ID);
             return;
         }
@@ -161,7 +161,7 @@ OKSingletonImplementations(DIMMessageDataSource, sharedInstance)
         id<MKMID> me = iMsg.envelope.receiver;
         id<MKMID> group = content.group;
         DIMKeyStore *keyStore = [DIMKeyStore sharedInstance];
-        id<MKMSymmetricKey> key = [keyStore cipherKeyWithSender:me receiver:group generate:NO];
+        id<MKSymmetricKey> key = [keyStore cipherKeyWithSender:me receiver:group generate:NO];
         [key removeObjectForKey:@"reused"];
         NSLog(@"key (%@ => %@): %@", me, group, key);
     }

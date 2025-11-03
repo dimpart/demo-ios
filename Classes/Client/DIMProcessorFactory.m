@@ -54,7 +54,7 @@
 
 @implementation SCProcessorCreator
 
-- (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type {
+- (id<DIMContentProcessor>)createContentProcessor:(NSString *)type {
     // application customized
     if (type == DKDContentType_Application) {
         return CREATE_CPU(DIMAppContentProcessor);
@@ -68,7 +68,7 @@
     return [super createContentProcessor:type];
 }
 
-- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)type {
+- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name withType:(NSString *)type {
     // mute
     if ([name isEqualToString:DIMCommand_Mute]) {
         return CREATE_CPU(DIMMuteCommandProcessor);
@@ -93,7 +93,7 @@
         return CREATE_CPU(DIMSearchCommandProcessor);
     }
     // others
-    return [super createCommandProcessor:name type:type];
+    return [super createCommandProcessor:name withType:type];
 }
 
 @end

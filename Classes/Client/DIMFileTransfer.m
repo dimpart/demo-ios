@@ -93,7 +93,7 @@ static inline NSData *load_downloaded_file(NSString *filename) {
  * @param password - symmetric key
  * @return decrypted data
  */
-static inline NSData *decrypt_file(NSString *path, id<MKMDecryptKey> password,
+static inline NSData *decrypt_file(NSString *path, id<MKDecryptKey> password,
                                    NSDictionary *extra) {
     NSData *data = load_downloaded_file(path);
     if (!data) {
@@ -251,7 +251,7 @@ OKSingletonImplementations(DIMFileTransfer, sharedInstance)
         return origin;
     }
     // get filename from data
-    NSString *filename = MKMHexEncode(MKMMD5Digest(data));
+    NSString *filename = MKHexEncode(MKMD5Digest(data));
     if (ext.length > 0) {
         return [filename stringByAppendingPathExtension:ext];
     } else {
@@ -291,7 +291,7 @@ OKSingletonImplementations(DIMFileTransfer, sharedInstance)
         return nil;
     }
     // decrypt with message password
-    id<MKMDecryptKey> password = [content password];
+    id<MKDecryptKey> password = [content password];
     if (!password) {
         NSLog(@"password not found: %@", content);
         return nil;
@@ -358,7 +358,7 @@ OKSingletonImplementations(DIMFileTransfer, sharedInstance)
                       name:(const NSString*)var
                     sender:(id<MKMID>)from {
     NSURL *url = NSURLFromString([self api]);
-    NSData *key = MKMHexDecode(self.secret);
+    NSData *key = MKHexDecode(self.secret);
     return [_http upload:url
                   secret:key
                     data:data
@@ -389,7 +389,7 @@ OKSingletonImplementations(DIMFileTransfer, sharedInstance)
     //      hex(md5(url)) + ext
     NSString *urlString = NSStringFromURL(url);
     NSString *filename = [urlString lastPathComponent];
-    NSData *data = MKMUTF8Encode(urlString);
+    NSData *data = MKUTF8Encode(urlString);
     return [self filenameForData:data filename:filename];
 }
 

@@ -55,14 +55,14 @@
     }
 
     NSString *username = @"dim";
-    NSUInteger version = MKMMetaType_Default;
+    NSString *version = MKMMetaType_Default;
     
     if ([returnValue objectForKey:@"version"] != nil) {
-        version = [[returnValue objectForKey:@"version"] unsignedIntegerValue];
+        version = [returnValue objectForKey:@"version"];
     }
     
     // 1. generate private key
-    id<MKMPrivateKey> SK = MKMPrivateKeyParse(returnValue);
+    id<MKPrivateKey> SK = MKPrivateKeyParse(returnValue);
     // 2. generate meta
     id<MKMMeta> meta = MKMMetaGenerate(version, SK, username);
     // 3. generate ID

@@ -59,29 +59,19 @@
 }
 
 // override for your application
-- (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg {
-    if ([app isEqualToString:@"chat.dim.sechat"]) {
+- (id<DIMCustomizedContentHandler>)filterApplication:(NSString *)app
+                                          withModule:(NSString *)mod
+                                             content:(id<DKDCustomizedContent>)body
+                                            messasge:(id<DKDReliableMessage>)rMsg {
+    if ([app isEqualToString:@"chat.dim.sechat"] &&
+        [mod isEqualToString:@"drift_bottle"]) {
         // App ID match
-        // return null to fetch module handler
-        return nil;
-    }
-    return [super filterApplication:app content:customized messasge:rMsg];
-}
-
-// override for your module
-- (id<DIMCustomizedContentHandler>)fetchModule:(NSString *)mod
-                                       content:(id<DKDCustomizedContent>)customized
-                                      messasge:(id<DKDReliableMessage>)rMsg {
-    if ([mod isEqualToString:@"drift_bottle"]) {
         // customized module: "drift_bottle"
         return _driftBottle;
     }
     // TODO: define your modules here
     // ...
-
-    return [super fetchModule:mod content:customized messasge:rMsg];
+    return [super filterApplication:app withModule:mod content:body messasge:rMsg];
 }
 
 @end
@@ -94,30 +84,6 @@ id<DKDCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSStr
 }
 
 #pragma mark - Application Customized Content Handler
-
-@implementation DIMAppContentHandler
-
-- (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
-                                   sender:(id<MKMID>)uid
-                                  content:(id<DKDCustomizedContent>)customized
-                                  message:(id<DKDReliableMessage>)rMsg {
-    NSString *app = [customized application];
-    NSString *mod = [customized moduleName];
-    NSDictionary *info = @{
-        @"template": @"Customized Content (app: %@, mod: %@, act: %@) not support yet!",
-        @"replacements": @{
-            @"app": app,
-            @"mod": mod,
-            @"act": act,
-        },
-    };
-    return [self respondReceipt:@"Content not support."
-                       envelope:rMsg.envelope
-                        content:customized
-                          extra:info];
-}
-
-@end
 
 /**
  *  Drift Bottle Game

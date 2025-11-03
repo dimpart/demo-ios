@@ -180,7 +180,7 @@ OKSingletonImplementations(DIMAmanuensis, sharedInstance)
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     id<MKMUser> user = [facebook currentUser];
     id<MKMID> sender = [env sender];
-    if ([user.ID isEqual:sender]) {
+    if ([user.identifier isEqual:sender]) {
         return [self conversationWithID:receiver];
     } else {
         return [self conversationWithID:sender];
@@ -212,9 +212,10 @@ static inline bool receipt_match_message(id<DKDReceiptCommand> receipt,
         }
         // TODO: check receiver?
     }
+    id<DKDContent> content = [iMsg content];
     // check sn
     DKDSerialNumber sn1 = [receipt originalSerialNumber];
-    DKDSerialNumber sn2 = [iMsg.content serialNumber];
+    DKDSerialNumber sn2 = [content sn];
     if (sn1 > 0) {
         return sn1 == sn2;
     }

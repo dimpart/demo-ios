@@ -51,12 +51,12 @@
     id<MKMUser> user = [facebook currentUser];
     
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
-    [manager unmuteAllConversationForUser:user.ID];
+    [manager unmuteAllConversationForUser:user.identifier];
     
     id<MKMID> conversationID;
     for (NSString *item in muteList){
         conversationID = MKMIDParse(item);
-        [manager muteConversation:conversationID forUser:user.ID];
+        [manager muteConversation:conversationID forUser:user.identifier];
     }
     
     // no need to respond this command

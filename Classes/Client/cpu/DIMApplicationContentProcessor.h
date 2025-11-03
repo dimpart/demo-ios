@@ -55,17 +55,13 @@ id<DKDCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSStr
 
 #pragma mark - Application Customized Content Handler
 
-@interface DIMAppContentHandler : DIMTwinsHelper <DIMCustomizedContentHandler>
-
-@end
-
 /**
  *  Drift Bottle Game
  *  ~~~~~~~~~~~~~~~~~
  *
  *  Handler for customized content
  */
-@interface DIMDriftBottleHandler : DIMAppContentHandler
+@interface DIMDriftBottleHandler : DIMCustomizedContentHandler
 
 @end
 

@@ -43,24 +43,6 @@
 
 @implementation DIMSharedPacker
 
-// Override
-- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
-    [DIMCompatible fixMetaAttachment:rMsg];
-    return [super serializeMessage:rMsg];
-}
-
-// Override
-- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
-    if ([data length] < 2) {
-        return nil;
-    }
-    id<DKDReliableMessage> rMsg = [super deserializeMessage:data];
-    if (rMsg) {
-        [DIMCompatible fixMetaAttachment:rMsg];
-    }
-    return rMsg;
-}
-
 //// Override
 //- (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
 //    id<MKMID> sender = rMsg.sender;
@@ -86,7 +68,7 @@
 
 // Override
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
-    id<MKMSymmetricKey> key;
+    id<MKSymmetricKey> key;
     // make sure visa.key exists before encrypting message
     id<DKDContent> content = [iMsg content];
     if ([content conformsToProtocol:@protocol(DKDFileContent)]) {
@@ -120,7 +102,7 @@
     id<DKDInstantMessage> iMsg = [super decryptMessage:sMsg];
     id<DKDContent> content = [iMsg content];
     if ([content conformsToProtocol:@protocol(DKDFileContent)]) {
-        id<MKMSymmetricKey> key;
+        id<MKSymmetricKey> key;
         if ([content objectForKey:@"data"] == nil &&
             [content objectForKey:@"URL"] != nil) {
             id<MKMID> sender = [iMsg sender];

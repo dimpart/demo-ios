@@ -86,10 +86,10 @@
         
         if(![contacts containsObject:groupID]){
             
-            [facebook addContact:groupID user:user.ID];
+            [facebook addContact:groupID user:user.identifier];
             
             //Post contacts to server
-            NSArray<id<MKMID>> *allContacts = [facebook contactsOfUser:user.ID];
+            NSArray<id<MKMID>> *allContacts = [facebook getContacts:user.identifier];
             
             DIMSharedMessenger *messenger = [DIMGlobal messenger];
             [messenger postContacts:allContacts];
@@ -132,10 +132,10 @@
         [mArray addObject:contact];
         
         if (MKMIDIsGroup(contact)){
-            NSArray *members = [facebook membersOfGroup:contact];
+            NSArray *members = [facebook getMembers:contact];
             
             if(members.count == 0){
-                NSArray *assistant = [facebook assistantsOfGroup:contact];
+                NSArray *assistant = [facebook getAssistants:contact];
                 DIMSharedMessenger *messenger = [DIMGlobal messenger];
                 [messenger queryGroupForID:contact fromMembers:assistant];
             }
@@ -221,10 +221,10 @@
         
         DIMSharedFacebook *facebook = [DIMGlobal facebook];
         id<MKMUser> user = [facebook currentUser];
-        [facebook removeContact:ID user:user.ID];
+        [facebook removeContact:ID user:user.identifier];
         
         //Post contacts to server
-        NSArray<id<MKMID>> *allContacts = [facebook contactsOfUser:user.ID];
+        NSArray<id<MKMID>> *allContacts = [facebook getContacts:user.identifier];
         
         DIMSharedMessenger *messenger = [DIMGlobal messenger];
         [messenger postContacts:allContacts];

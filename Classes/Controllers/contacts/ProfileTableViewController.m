@@ -98,7 +98,7 @@
     [super viewDidLoad];
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
-    [facebook documentsForID:_contact];
+    [facebook getDocuments:_contact];
     
     NSString *name = DIMNameForID(_contact);
     self.nicknameLabel.text = name;
@@ -163,16 +163,16 @@
         DIMUser *user = (DIMUser *)[facebook currentUser];
         
         DIMUser *selectedUser = (DIMUser *)DIMUserWithID(self.contact);
-        NSString *name = DIMNameForID(!selectedUser ? _contact : selectedUser.ID);
+        NSString *name = DIMNameForID(!selectedUser ? _contact : selectedUser.identifier);
         NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Do you want to add %@ to your contact?", @"title"), name];
         
         [self showMessage:message withTitle:NSLocalizedString(@"Add To Contact", @"title") cancelHandler:nil defaultHandler:^(UIAlertAction * _Nonnull action) {
             
             DIMSharedFacebook *facebook = [DIMGlobal facebook];
-            [facebook addContact:self.contact user:user.ID];
+            [facebook addContact:self.contact user:user.identifier];
             
             //Post contacts to server
-            NSArray<id<MKMID>> *allContacts = [[DIMGlobal facebook] contactsOfUser:user.ID];
+            NSArray<id<MKMID>> *allContacts = [[DIMGlobal facebook] getContacts:user.identifier];
             
             DIMSharedMessenger *messenger = [DIMGlobal messenger];
             [messenger postContacts:allContacts];

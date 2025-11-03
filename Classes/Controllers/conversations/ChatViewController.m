@@ -256,7 +256,7 @@
             id<DKDInstantMessage> iMsg = [_conversation messageAtIndex:i];
             id<MKMID> sender = iMsg.envelope.sender;
             
-            if(sender == user.ID){
+            if(sender == user.identifier){
                 hasSentMessage = YES;
                 break;
             }
@@ -267,9 +267,9 @@
         if(hasSentMessage == NO){
             
             //Send profile command to audience
-            id<MKMID> ID = user.ID;
+            id<MKMID> ID = [user identifier];
             id<MKMVisa> visa = user.visa;
-            id<DKDContent> content = DIMDocumentCommandResponse(ID, nil, visa);
+            id<DKDContent> content = DIMDocumentCommandResponse(ID, nil, @[visa]);
             id<MKMID> receiverID = _conversation.ID;
             DIMSharedMessenger *messenger = [DIMGlobal messenger];
             [messenger sendContent:content
@@ -665,7 +665,7 @@
     
     [_messageArray removeAllObjects];
     
-    DIMCommand *guide = [[DIMCommand alloc] initWithCommandName:@"guide"];
+    DIMCommand *guide = [[DIMCommand alloc] initWithCmd:@"guide"];
     id<MKMID> admin = MKMIDParse(@"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ");
     id<DKDEnvelope> env = DKDEnvelopeCreate(admin, _conversation.ID, nil);
     id<DKDInstantMessage> guideMessage = DKDInstantMessageCreate(env, guide);
@@ -727,7 +727,7 @@
         id<DKDContent> content = iMsg.content;
         id<MKMID> sender = iMsg.envelope.sender;
         
-        DKDContentType type = content.type;
+        NSString *type = [content type];
         if (type == DKDContentType_History || type == DKDContentType_Command) {
             if ([[(DIMCommand *)content cmd] isEqualToString:@"guide"]) {
                 // show guide
@@ -739,13 +739,13 @@
         } else if ([sender isEqual:_conversation.ID]) {
             // message from conversation target
             identifier = @"receivedMsgCell";
-        } else if ([sender isEqual:user.ID]) {
+        } else if ([sender isEqual:user.identifier]) {
             // message from current user
             identifier = @"sentMsgCell";
         } else {
-            NSArray *users = [facebook localUsers];
+            NSArray *users = [facebook.archivist localUsers];
             for (user in users) {
-                if ([user.ID isEqual:sender]) {
+                if ([user.identifier isEqual:sender]) {
                     // message from my account
                     identifier = @"sentMsgCell";
                 }

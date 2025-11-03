@@ -49,7 +49,7 @@ static inline void save_instant_message(id<DKDInstantMessage> iMsg) {
 }
 
 static inline void send_instant_message(id<DKDInstantMessage> iMsg) {
-    NSLog(@"send insetant message (type: %d): %@ -> %@", iMsg.content.type, iMsg.sender, iMsg.receiver);
+    NSLog(@"send insetant message (type: %@): %@ -> %@", iMsg.content.type, iMsg.sender, iMsg.receiver);
     // send by shared messenger
     DIMSharedMessenger *messenger = [DIMGlobal messenger];
     [messenger sendInstantMessage:iMsg priority:STDeparturePriorityNormal];
@@ -149,7 +149,7 @@ static inline void send_instant_message(id<DKDInstantMessage> iMsg) {
 }
 
 - (void)sendFileContentMessage:(id<DKDInstantMessage>)iMsg
-                      password:(id<MKMSymmetricKey>)key {
+                      password:(id<MKSymmetricKey>)key {
     id<DKDFileContent> content = (id<DKDFileContent>)[iMsg content];
     // 1. save origin file data
     NSData *data = [content data];
@@ -163,7 +163,7 @@ static inline void send_instant_message(id<DKDInstantMessage> iMsg) {
     [content setData:nil];
     save_instant_message(iMsg);
     // 3. add upload task with encrypted data
-    NSData *encrypted = [key encrypt:data params:content.dictionary];
+    NSData *encrypted = [key encrypt:data extra:content.dictionary];
     filename = [DIMFileTransfer filenameForData:encrypted filename:filename];
     id<MKMID> sender = [iMsg sender];
     NSURL *url = [self.fileTransfer uploadEncryptedData:encrypted
@@ -188,23 +188,27 @@ static inline void send_instant_message(id<DKDInstantMessage> iMsg) {
 }
 
 - (void)sendImage:(NSData *)jpeg thumbnail:(NSData *)small receiver:(id<MKMID>)to {
+    id<MKTransportableData> img = MKTransportableDataCreate(jpeg, nil);
+    id<MKTransportableData> ted = MKTransportableDataCreate(small, nil);
+    id<MKPortableNetworkFile> ico = MKPortableNetworkFileCreate(ted, nil, nil, nil);
     NSUInteger length = jpeg.length;
     NSAssert(length > 0, @"image data empty");
-    NSString *filename = MKMHexEncode(MKMMD5Digest(jpeg));
+    NSString *filename = MKHexEncode(MKMD5Digest(jpeg));
     filename = [filename stringByAppendingPathExtension:@"jpeg"];
-    id<DKDImageContent> content = DIMImageContentFromData(jpeg, filename);
+    id<DKDImageContent> content = DIMImageContentFromData(img, filename);
     // add image data length & thumbnail into message content
     [content setObject:@(length) forKey:@"length"];
-    [content setThumbnail:small];
+    [content setThumbnail:ico];
     [self sendContent:content receiver:to];
 }
 
 - (void)sendVoice:(NSData *)mp4 duration:(NSTimeInterval)ti receiver:(id<MKMID>)to {
+    id<MKTransportableData> ted = MKTransportableDataCreate(mp4, nil);
     NSUInteger length = mp4.length;
     NSAssert(length > 0, @"voice data empty");
-    NSString *filename = MKMHexEncode(MKMMD5Digest(mp4));
+    NSString *filename = MKHexEncode(MKMD5Digest(mp4));
     filename = [filename stringByAppendingPathExtension:@"mp4"];
-    id<DKDAudioContent> content = DIMAudioContentFromData(mp4, filename);
+    id<DKDAudioContent> content = DIMAudioContentFromData(ted, filename);
     // add image data length & thumbnail into message content
     [content setObject:@(length) forKey:@"length"];
     [content setObject:@(ti) forKey:@"duration"];
@@ -221,7 +225,7 @@ static inline void send_instant_message(id<DKDInstantMessage> iMsg) {
                            receiver:to
                            priority:STDeparturePriorityNormal];
     if (result.second == nil) {
-        NSLog(@"not send yet (type: %d): %@", content.type, to);
+        NSLog(@"not send yet (type: %@): %@", content.type, to);
         return;
     }
     NSAssert(result.first, @"failed to pack instant message: %@", to);

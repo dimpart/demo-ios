@@ -23,13 +23,13 @@
     
     UIImage *image = nil;
     
-    id<MKMPortableNetworkFile> avatar = [self avatar];
+    id<MKPortableNetworkFile> avatar = [self avatar];
     // TODO: encrypted file?
     NSString *url = [avatar string];
     if (url) {
         if ([url containsString:@"://"]) {
             DIMSharedFacebook *facebook = [DIMGlobal facebook];
-            image = [facebook loadAvatarWithURL:url forID:self.ID];
+            image = [facebook loadAvatarWithURL:url forID:self.identifier];
         } else {
             image = [UIImage imageNamed:url];
         }
@@ -62,7 +62,7 @@
 //        }
         
         // create image with members' avatar(s)
-        NSArray<id<MKMID>> *members = DIMGroupWithID(self.ID).members;
+        NSArray<id<MKMID>> *members = DIMGroupWithID(self.identifier).members;
         if (members.count > 0) {
             CGSize tileSize;
             if (members.count > 4) {
@@ -91,7 +91,7 @@
         // create image with first character of name
         NSString *name = self.name;
         if (name.length == 0) {
-            name = self.ID.name;
+            name = self.identifier.name;
             if (name.length == 0) {
                 name = @"Đ"; // BTC Address: ฿
             }

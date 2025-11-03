@@ -47,7 +47,7 @@
     } else {
         cmd = DIMCommand_Search;
     }
-    if (self = [self initWithCommandName:cmd]) {
+    if (self = [self initWithCmd:cmd]) {
         if (string) {
             [self setObject:string forKey:@"keywords"];
         }

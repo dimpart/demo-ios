@@ -40,7 +40,7 @@
 #import "DIMKeyStore.h"
 
 // receiver -> key
-typedef NSMutableDictionary<id<MKMID>, id<MKMSymmetricKey>> KeyTable;
+typedef NSMutableDictionary<id<MKMID>, id<MKSymmetricKey>> KeyTable;
 // sender -> map<receiver, key>
 typedef NSMutableDictionary<id<MKMID>, KeyTable *> KeyMap;
 
@@ -112,14 +112,14 @@ OKSingletonImplementations(DIMKeyStore, sharedInstance)
 
 - (BOOL)updateKeys:(NSDictionary *)keyMap {
     BOOL changed = NO;
-    id<MKMSymmetricKey> oldKey, newKey;
+    id<MKSymmetricKey> oldKey, newKey;
     for (NSString *from in keyMap) {
         id<MKMID> sender = MKMIDParse(from);
         NSDictionary *keyTable = [keyMap objectForKey:from];
         for (NSString *to in keyTable) {
             id<MKMID> receiver = MKMIDParse(to);
             id keyDict = [keyTable objectForKey:to];
-            newKey = MKMSymmetricKeyParse(keyDict);
+            newKey = MKSymmetricKeyParse(keyDict);
             NSAssert(newKey, @"key error(%@ -> %@): %@", from, to, keyDict);
             // check whether exists an old key
             oldKey = [self _cipherKeyFrom:sender to:receiver];
@@ -133,20 +133,19 @@ OKSingletonImplementations(DIMKeyStore, sharedInstance)
     return changed;
 }
 
-- (nullable id<MKMSymmetricKey>)_cipherKeyFrom:(id<MKMID>)sender
-                                            to:(id<MKMID>)receiver {
+- (nullable id<MKSymmetricKey>)_cipherKeyFrom:(id<MKMID>)sender
+                                           to:(id<MKMID>)receiver {
     KeyTable *keyTable = [_keyMap objectForKey:sender];
     return [keyTable objectForKey:receiver];
 }
 
-- (void)_cacheCipherKey:(id<MKMSymmetricKey>)key
+- (void)_cacheCipherKey:(id<MKSymmetricKey>)key
                    from:(id<MKMID>)sender
                      to:(id<MKMID>)receiver {
-    NSAssert([key isKindOfClass:[NSDictionary class]], @"cipher key cannot be empty");
-    NSDictionary *keyInfo = (NSDictionary *)key;
+    NSDictionary *keyInfo = [key dictionary];
     KeyTable *keyTable = [_keyMap objectForKey:sender];
     if (keyTable) {
-        id<MKMSymmetricKey> old = [keyTable objectForKey:receiver];
+        id<MKSymmetricKey> old = [keyTable objectForKey:receiver];
         if (old) {
             // check whether same key exists
             BOOL equals = YES;
@@ -179,16 +178,16 @@ OKSingletonImplementations(DIMKeyStore, sharedInstance)
 #pragma mark - DIMCipherKeyDelegate
 
 // NOTICE: override to check whether key expired for sending message
-- (nullable id<MKMSymmetricKey>)cipherKeyWithSender:(id<MKMID>)sender
-                                           receiver:(id<MKMID>)receiver
-                                           generate:(BOOL)create {
+- (nullable id<MKSymmetricKey>)cipherKeyWithSender:(id<MKMID>)sender
+                                          receiver:(id<MKMID>)receiver
+                                          generate:(BOOL)create {
     if (MKMIDIsBroadcast(receiver)) {
-        return MKMSymmetricKeyGenerate(@"PLAIN");
+        return MKSymmetricKeyGenerate(@"PLAIN");
     }
     // get key from cache
-    id<MKMSymmetricKey> key = [self _cipherKeyFrom:sender to:receiver];
+    id<MKSymmetricKey> key = [self _cipherKeyFrom:sender to:receiver];
     if (!key && create) {
-        key = MKMSymmetricKeyGenerate(MKMAlgorithm_AES);
+        key = MKSymmetricKeyGenerate(MKSymmetricAlgorithm_AES);
         if (key) {
             [self _cacheCipherKey:key from:sender to:receiver];
         }
@@ -196,7 +195,7 @@ OKSingletonImplementations(DIMKeyStore, sharedInstance)
     return key;
 }
 
-- (void)cacheCipherKey:(id<MKMSymmetricKey>)key
+- (void)cacheCipherKey:(id<MKSymmetricKey>)key
             withSender:(id<MKMID>)sender
               receiver:(id<MKMID>)receiver {
     if (MKMIDIsBroadcast(receiver)) {

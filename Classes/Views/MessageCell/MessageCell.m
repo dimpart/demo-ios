@@ -122,22 +122,16 @@
         [self.contentView addSubview:self.picImageView];
         
         // message
-        switch (message.content.type) {
-            case DKDContentType_Text: {
+        NSString *type = [content type];
+        if ([type isEqualToString:DKDContentType_Text]) {
                 // show text
                 self.messageLabel.text = [content messageWithSender:sender];
                 // double click to zoom in
                 [self.messageLabel addDoubleClickTarget:self action:@selector(zoomIn:)];
-            }
-            break;
-                
-            case DKDContentType_File: {
+        } else if ([type isEqualToString:DKDContentType_File]) {
                 // TODO: show file info
                 self.messageLabel.text = [content messageWithSender:sender];
-            }
-            break;
-                
-            case DKDContentType_Image: {
+        } else if ([type isEqualToString:DKDContentType_Image]) {
                 NSLog(@"image content: %@", content);
                 // show image
                 if (msg.image) {
@@ -147,10 +141,7 @@
                 }
                 
                 [self.picImageView addClickTarget:self action:@selector(zoomIn:)];
-            }
-            break;
-                
-            case DKDContentType_Audio: {
+        } else if ([type isEqualToString:DKDContentType_Audio]) {
                 // TODO: show audio info
                 [self.messageLabel removeFromSuperview];
                 [self.picImageView removeFromSuperview];
@@ -173,16 +164,10 @@
                 NSString *durationString = [NSString stringWithFormat:@"%f''", duration];
                 [self.audioButton setTitle:durationString forState:UIControlStateNormal];
                 self.messageLabel.text = durationString;
-            }
-            break;
-                
-            case DKDContentType_Video: {
+        } else if ([type isEqualToString:DKDContentType_Audio]) {
                 // TODO: show video info
                 self.messageLabel.text = [content messageWithSender:sender];
-            }
-            break;
-                
-            case DKDContentType_Page: {
+        } else if ([type isEqualToString:DKDContentType_Page]) {
                 // TODO: show web page
                 DIMPageContent *page = (DIMPageContent *)content;
                 NSString *title = page.title;
@@ -229,10 +214,7 @@
                 self.messageLabel.attributedText = attrText;
                 
                 [self.messageLabel addClickTarget:self action:@selector(openURL:)];
-            }
-            break;
-                
-            default: {
+        } else {
                 NSString *text = [content messageWithSender:sender];
                 if ([text length] == 0) {
                     // unsupported message type
@@ -240,8 +222,6 @@
                     text = [NSString stringWithFormat:format, content.type];
                 }
                 self.messageLabel.text = text;
-            }
-            break;
         }
         
         [self setNeedsLayout];

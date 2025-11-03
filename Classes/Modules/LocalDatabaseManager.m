@@ -194,15 +194,19 @@
     
     [self insertConversation:conversationID];
     
-    NSString *content_text = MKMJSONEncode(msg.content);
+    id<DKDContent> content = [msg content];
+    
+    NSString *content_text = MKJsonEncode(content.dictionary);
     content_text = [content_text stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
 
-    NSString *text = [msg.content objectForKey:@"text"];
+    NSString *text = [content objectForKey:@"text"];
     text = [text stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
     
     NSTimeInterval sendTime = [msg.envelope.time timeIntervalSince1970];
     
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %lu, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, msg.content.serialNumber, msg.content.type, text, content_text, msg.envelope.sender, msg.envelope.receiver, sendTime, [(DIMContent *)msg.content state]];
+    UInt8 type = MKConvertInteger([content type], 0);
+    
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %u, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, content.sn, type, text, content_text, msg.envelope.sender, msg.envelope.receiver, sendTime, [(DIMContent *)msg.content state]];
     BOOL success = [self.db executeStatements:sql];
     
     if(success){
@@ -248,7 +252,7 @@
         NSInteger time = [s doubleForColumn:@"time"];
         NSInteger status = [s intForColumn:@"status"];
         
-        NSDictionary *contentDict = MKMJSONDecode(content_text);
+        NSDictionary *contentDict = MKJsonDecode(content_text);
         NSDictionary *messageDict = @{
             @"content": contentDict,
             @"sender": sender,

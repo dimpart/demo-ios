@@ -162,7 +162,7 @@ static inline BOOL search(NSString *keywords) {
             value = [results objectForKey:key];
             if ([value isKindOfClass:[NSDictionary class]]) {
                 meta = MKMMetaParse(value);
-                [facebook saveMeta:meta forID:ID];
+                [facebook.archivist saveMeta:meta forID:ID];
             }
         }
     }

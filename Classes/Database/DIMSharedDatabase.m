@@ -45,14 +45,14 @@ static inline NSString *private_label(NSString *type, id<MKMID> ID) {
     return [NSString stringWithFormat:@"%@:%@", type, address];
 }
 
-static inline BOOL private_save(id<MKMPrivateKey> key, NSString *type, id<MKMID> ID) {
+static inline BOOL private_save(id<MKPrivateKey> key, NSString *type, id<MKMID> ID) {
     NSString *label = private_label(type, ID);
-    return MKMPrivateKeySave(label, key);
+    return DIMPrivateKeySave(label, key);
 }
 
-static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
+static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
     NSString *label = private_label(type, ID);
-    return MKMPrivateKeyLoad(label);
+    return DIMPrivateKeyLoad(label);
 }
 
 @implementation DIMSharedDatabase
@@ -149,7 +149,7 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
         // if the user's public key matches with the group's meta,
         // it means this meta was generate by the user's private key
         meta = [self metaForID:member];
-        if ([gMeta matchPublicKey:meta.publicKey]) {
+        if ([DIMMetaUtils meta:gMeta matchPublicKey:meta.publicKey]) {
             return member;
         }
     }
@@ -264,7 +264,7 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 //
 
 // Override
-- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key
+- (BOOL)savePrivateKey:(id<MKPrivateKey>)key
               withType:(NSString *)type
                forUser:(id<MKMID>)user {
     // TODO: support multi private keys
@@ -272,14 +272,14 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (id<MKMPrivateKey>)privateKeyForSignature:(id<MKMID>)user {
+- (id<MKPrivateKey>)privateKeyForSignature:(id<MKMID>)user {
     // TODO: support multi private keys
     return [self privateKeyForVisaSignature:user];
 }
 
 // Override
-- (id<MKMPrivateKey>)privateKeyForVisaSignature:(id<MKMID>)user {
-    id<MKMPrivateKey> key;
+- (id<MKPrivateKey>)privateKeyForVisaSignature:(id<MKMID>)user {
+    id<MKPrivateKey> key;
     // get private key paired with meta.key
     key = private_load(DIMPrivateKeyType_Meta, user);
     if (!key) {
@@ -290,9 +290,9 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
+- (NSArray<id<MKDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
     NSMutableArray *mArray = [[NSMutableArray alloc] init];
-    id<MKMPrivateKey> key;
+    id<MKPrivateKey> key;
     // 1. get private key paired with visa.key
     key = private_load(DIMPrivateKeyType_Visa, user);
     if (key) {
@@ -300,12 +300,12 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
     }
     // get private key paired with meta.key
     key = private_load(DIMPrivateKeyType_Meta, user);
-    if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
+    if ([key conformsToProtocol:@protocol(MKDecryptKey)]) {
         [mArray addObject:key];
     }
     // get private key paired with meta.key
     key = private_load(nil, user);
-    if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
+    if ([key conformsToProtocol:@protocol(MKDecryptKey)]) {
         [mArray addObject:key];
     }
     return mArray;
@@ -319,7 +319,7 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 // Override
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)entity {
     BOOL OK;
-    if ([meta matchIdentifier:entity]) {
+    if ([DIMMetaUtils meta:meta matchIdentifier:entity]) {
         OK = [_metaTable saveMeta:meta forID:entity];
     } else {
         NSAssert(false, @"meta not match: %@ => %@", entity, meta);
@@ -343,7 +343,7 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 
 // Override
 - (BOOL)saveDocument:(id<MKMDocument>)doc {
-    id<MKMID> ID = [doc ID];
+    id<MKMID> ID = [doc identifier];
     id<MKMMeta> meta = [self metaForID:ID];
     NSAssert(meta, @"meta not exists: %@", ID);
     BOOL OK;
@@ -364,14 +364,14 @@ static inline id<MKMPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 //
 
 // Override
-- (nullable id<MKMSymmetricKey>)cipherKeyWithSender:(id<MKMID>)sender
-                                           receiver:(id<MKMID>)receiver
-                                           generate:(BOOL)create {
+- (nullable id<MKSymmetricKey>)cipherKeyWithSender:(id<MKMID>)sender
+                                          receiver:(id<MKMID>)receiver
+                                          generate:(BOOL)create {
     return [_msgKeyTable cipherKeyWithSender:sender receiver:receiver generate:create];
 }
 
 // Override
-- (void)cacheCipherKey:(id<MKMSymmetricKey>)key
+- (void)cacheCipherKey:(id<MKSymmetricKey>)key
             withSender:(id<MKMID>)sender
               receiver:(id<MKMID>)receiver {
     [_msgKeyTable cacheCipherKey:key withSender:sender receiver:receiver];

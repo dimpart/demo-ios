@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sendVoice:(NSData *)mp4 duration:(NSTimeInterval)ti receiver:(id<MKMID>)to;
 
 - (void)sendFileContentMessage:(id<DKDInstantMessage>)iMsg
-                      password:(id<MKMSymmetricKey>)key;
+                      password:(id<MKSymmetricKey>)key;
 
 - (void)purge;
 

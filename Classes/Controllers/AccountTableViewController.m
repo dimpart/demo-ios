@@ -75,7 +75,7 @@
     
     id<MKMDocument> profile = [notification.userInfo objectForKey:@"profile"];
     id<MKMUser> user = [DIMGlobal facebook].currentUser;
-    if ([profile.ID isEqual:user.ID]) {
+    if ([profile.identifier isEqual:user.identifier]) {
         [self reloadData];
     }
 }
@@ -86,7 +86,7 @@
     id<MKMID> userID = [userInfo objectForKey:@"ID"];
     id<MKMUser> user = [DIMGlobal facebook].currentUser;
     
-    if([userID isEqual:user.ID]){
+    if([userID isEqual:user.identifier]){
         [self reloadData];
     }
 }
@@ -100,8 +100,8 @@
         DIMVisa *profile = (DIMVisa *)[user visa];
         UIImage *image = [profile avatarImageWithSize:avatarFrame.size];
         [self.avatarImageView setImage:image];
-        self.nameLabel.text = DIMNameForID(user.ID);
-        self.descLabel.text = (NSString *)user.ID;
+        self.nameLabel.text = DIMNameForID(user.identifier);
+        self.descLabel.text = [user.identifier string];
         
         [self.tableView reloadData];
     } waitUntilDone:NO];
@@ -139,7 +139,7 @@
     if(indexPath.section == 0){
         DIMSharedFacebook *facebook = [DIMGlobal facebook];
         ContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
-        cell.contact = [facebook currentUser].ID;
+        cell.contact = [facebook currentUser].identifier;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         return cell;
     }

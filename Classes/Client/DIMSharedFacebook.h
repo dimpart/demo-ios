@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (OKPair<NSString *, NSString *> *)avatarForUser:(id<MKMID>)user;
 
-- (BOOL)savePrivateKey:(id<MKMPrivateKey>)SK withType:(NSString *)type forUser:(id<MKMID>)user;
+- (BOOL)savePrivateKey:(id<MKPrivateKey>)SK withType:(NSString *)type forUser:(id<MKMID>)user;
 
 - (BOOL)addUser:(id<MKMID>)user;
 

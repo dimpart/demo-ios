@@ -235,7 +235,7 @@
     NSUInteger len = [responseData length];
     if (len <= 4) {
         // TODO: respond 'PONG' when received 'PING'
-        NSLog(@"star: onReceive: [%@]", MKMUTF8Decode(responseData));
+        NSLog(@"star: onReceive: [%@]", MKUTF8Decode(responseData));
         return 0;
     } else {
         NSLog(@"star: onReceive: %lu byte(s)", len);
@@ -258,7 +258,7 @@
    withError:(NSError *)error {
     NSUInteger len = [requestData length];
     if (len == 4) {
-        NSLog(@"star: onFinishSend: [%@], error: %@", MKMUTF8Decode(requestData), error);
+        NSLog(@"star: onFinishSend: [%@], error: %@", MKUTF8Decode(requestData), error);
     } else {
         NSLog(@"star: onFinishSend: %lu byte(s), error: %@", len, error);
     }

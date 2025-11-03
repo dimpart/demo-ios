@@ -89,9 +89,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Decryption
 
-- (nullable NSData *)decryptWithSymmetricKey:(id<MKMDecryptKey>)PW;
+- (nullable NSData *)decryptWithSymmetricKey:(id<MKDecryptKey>)PW;
 
-- (nullable NSData *)decryptWithPrivateKey:(id<MKMDecryptKey>)SK;
+- (nullable NSData *)decryptWithPrivateKey:(id<MKDecryptKey>)SK;
 
 @end
 

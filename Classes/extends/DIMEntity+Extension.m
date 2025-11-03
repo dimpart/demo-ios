@@ -53,10 +53,10 @@
     id<MKMMeta> meta = MKMMetaParse([dict objectForKey:@"meta"]);
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
-    [facebook saveMeta:meta forID:ID];
+    [facebook.archivist saveMeta:meta forID:ID];
     
     // save private key paired to meta.key
-    id<MKMPrivateKey> SK = MKMPrivateKeyParse([dict objectForKey:@"privateKey"]);
+    id<MKPrivateKey> SK = MKPrivateKeyParse([dict objectForKey:@"privateKey"]);
     [facebook savePrivateKey:SK withType:DIMPrivateKeyType_Meta forUser:ID];
     
     DIMUser *user = (DIMUser *)DIMUserWithID(ID);
@@ -76,7 +76,7 @@
             [mDict setObject:ID forKey:@"ID"];
         }
         profile = MKMDocumentParse(profile);
-        [[DIMGlobal facebook] saveDocument:profile];
+        [facebook.archivist saveDocument:profile];
     }
     
     return user;

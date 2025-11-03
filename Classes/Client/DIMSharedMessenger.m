@@ -98,30 +98,6 @@
 }
 
 // Override
-- (NSData *)message:(id<DKDInstantMessage>)iMsg
-   serializeContent:(id<DKDContent>)content
-            withKey:(id<MKMSymmetricKey>)password {
-    if ([content conformsToProtocol:@protocol(DKDCommand)]) {
-        content = [DIMCompatible fixCommand:(id<DKDCommand>)content];
-    }
-    //return MKMUTF8Encode(MKMJSONEncode(content));
-    return [super message:iMsg serializeContent:content withKey:password];
-}
-
-// Override
-- (nullable id<DKDContent>)message:(id<DKDSecureMessage>)sMsg
-                deserializeContent:(NSData *)data
-                           withKey:(id<MKMSymmetricKey>)password {
-    id<DKDContent> content = [super message:sMsg
-                         deserializeContent:data
-                                    withKey:password];
-    if ([content conformsToProtocol:@protocol(DKDCommand)]) {
-        content = [DIMCompatible fixCommand:(id<DKDCommand>)content];
-    }
-    return content;
-}
-
-// Override
 - (id<DKDReliableMessage>)sendInstantMessage:(id<DKDInstantMessage>)iMsg
                                     priority:(NSInteger)prior {
     // send message (secured + certified) to target station
@@ -157,7 +133,7 @@
 
 - (BOOL)sendCommand:(id<DKDCommand>)content priority:(NSInteger)prior {
     id<MKMStation> station = [self currentStation];
-    return [self sendContent:content receiver:station.ID priority:prior];
+    return [self sendContent:content receiver:station.identifier priority:prior];
 }
 
 // private
@@ -179,7 +155,7 @@
 - (BOOL)broadcastContent:(id<DKDContent>)content {
     id<MKMID> group = [content group];
     if (!MKMIDIsBroadcast(group)) {
-        group = MKMEveryone();
+        group = MKMEveryone;
         [content setGroup:group];
     }
     return [self sendContent:content
@@ -193,8 +169,8 @@
         NSAssert(false, @"login first");
         return NO;
     }
-    id<MKMID> ID = [doc ID];
-    if (![user.ID isEqual:ID]) {
+    id<MKMID> ID = [doc identifier];
+    if (![user.identifier isEqual:ID]) {
         NSAssert(false, @"visa document error: %@", doc);
         return NO;
     }
@@ -204,7 +180,7 @@
         NSLog(@"no contacts now");
         return NO;
     }
-    id<DKDCommand> cmd = DIMDocumentCommandResponse(ID, nil, doc);
+    id<DKDCommand> cmd = DIMDocumentCommandResponse(ID, nil, @[doc]);
     for (id<MKMID> item in contacts) {
         [self sendContent:cmd receiver:item priority:STDeparturePrioritySlower];
     }
@@ -212,10 +188,10 @@
 }
 
 - (BOOL)postDocument:(id<MKMDocument>)doc withMeta:(id<MKMMeta>)meta {
-    id<MKMID> ID = [doc ID];
+    id<MKMID> ID = [doc identifier];
     id<DKDCommand> cmd = [[DIMDocumentCommand alloc] initWithID:ID
                                                            meta:meta
-                                                       document:doc];
+                                                      documents:@[doc]];
     return [self sendCommand:cmd priority:STDeparturePrioritySlower];
 }
 
@@ -223,17 +199,17 @@
     id<MKMUser> user = [self.facebook currentUser];
     NSAssert(user, @"current user empty");
     // 1. generate password
-    id<MKMSymmetricKey> password = MKMSymmetricKeyGenerate(MKMAlgorithm_AES);
+    id<MKSymmetricKey> password = MKSymmetricKeyGenerate(MKSymmetricAlgorithm_AES);
     // 2. encrypt contacts list
-    NSData *data = MKMUTF8Encode(MKMJSONEncode(MKMIDRevert(contacts)));
-    data = [password encrypt:data params:nil];  // FIXME: store 'IV'
+    NSData *data = MKUTF8Encode(MKJsonEncode(MKMIDRevert(contacts)));
+    data = [password encrypt:data extra:nil];  // FIXME: store 'IV'
     // 3. encrypt key
-    NSData *key = MKMUTF8Encode(MKMJSONEncode(password.dictionary));
+    NSData *key = MKUTF8Encode(MKJsonEncode(password.dictionary));
     key = [user encrypt:key];
     // 4. pack 'storage' command
     id<DKDStorageCommand> cmd;
     cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
-    [cmd setID:user.ID];
+    [cmd setID:user.identifier];
     [cmd setData:data];
     [cmd setKey:key];
     // 5. send to current station
@@ -250,7 +226,7 @@
     // pack 'contacts' command
     id<DKDStorageCommand> cmd;
     cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
-    [cmd setID:user.ID];
+    [cmd setID:user.identifier];
     // send to current station
     return [self sendCommand:cmd priority:STDeparturePrioritySlower];
 }

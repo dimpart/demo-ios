@@ -114,7 +114,7 @@
     [_avatarImageView setImage:image];
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
-    _nameLabel.text = [facebook nameForID:_conversation.ID];
+    _nameLabel.text = [facebook getName:_conversation.ID];
 
     // last message
     NSString *last = nil;

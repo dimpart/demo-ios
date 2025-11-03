@@ -14,8 +14,6 @@
 #import "DIMEntity+Extension.h"
 #import "DIMGlobalVariable.h"
 
-#import "DIMSharedGroupManager.h"
-
 #import "Client.h"
 #import "MessageDatabase.h"
 #import "LocalDatabaseManager.h"
@@ -139,7 +137,7 @@
             handler = ^(UIAlertAction *action) {
                 // send quit group command
                 DIMSharedGroupManager *manager = [DIMSharedGroupManager sharedInstance];
-                [manager quitGroup:group.ID];
+                [manager quitGroup:group.identifier];
                 
                 // clear message in conversation
                 MessageDatabase *msgDB = [MessageDatabase sharedInstance];
@@ -154,7 +152,7 @@
         DIMSharedFacebook *facebook = [DIMGlobal facebook];
         id<MKMUser> user = [facebook currentUser];
         
-        NSString *sender = [[NSString alloc] initWithFormat:@"%@", user.ID];
+        NSString *sender = [[NSString alloc] initWithFormat:@"%@", user.identifier];
         NSString *identifier = [[NSString alloc] initWithFormat:@"%@", _conversation.ID];
         NSString *type = @"individual";
         if (MKMIDIsGroup(_conversation.ID)) {
@@ -204,7 +202,7 @@
         DIMSharedFacebook *facebook = [DIMGlobal facebook];
         id<MKMUser> user = [facebook currentUser];
         DIMSharedGroupManager *manager = [DIMSharedGroupManager sharedInstance];
-        if ([manager isOwner:user.ID group:_conversation.ID]) {
+        if ([manager isOwner:user.identifier group:_conversation.ID]) {
             return 1;
         }
     }
@@ -293,7 +291,7 @@
             muteCell.textLabel.textAlignment = NSTextAlignmentLeft;
             muteCell.textLabel.text = NSLocalizedString(@"Mute", @"title");
             muteCell.delegate = self;
-            muteCell.switchOn = [[LocalDatabaseManager sharedInstance] isConversation:self.conversation.ID forUser:user.ID];
+            muteCell.switchOn = [[LocalDatabaseManager sharedInstance] isConversation:self.conversation.ID forUser:user.identifier];
             cell = muteCell;
         }
         
@@ -325,7 +323,7 @@
         DIMSharedFacebook *facebook = [DIMGlobal facebook];
         id<MKMUser> user = [facebook currentUser];
         
-        NSString *sender = [[NSString alloc] initWithFormat:@"%@", user.ID];
+        NSString *sender = [[NSString alloc] initWithFormat:@"%@", user.identifier];
         NSString *identifier = [[NSString alloc] initWithFormat:@"%@", _conversation.ID];
         NSString *type = @"individual";
         if (MKMIDIsGroup(_conversation.ID)) {
@@ -357,17 +355,17 @@
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     id<MKMUser> user = [facebook currentUser];
     
-    NSArray *currentList = [[LocalDatabaseManager sharedInstance] muteListForUser:user.ID];
+    NSArray *currentList = [[LocalDatabaseManager sharedInstance] muteListForUser:user.identifier];
     NSMutableArray *newList = [[NSMutableArray alloc] initWithArray:currentList];
     
     if(on){
         if(![newList containsObject:self.conversation.ID]){
             [newList addObject:self.conversation.ID];
         }
-        [[LocalDatabaseManager sharedInstance] muteConversation:self.conversation.ID forUser:user.ID];
+        [[LocalDatabaseManager sharedInstance] muteConversation:self.conversation.ID forUser:user.identifier];
     }else{
         [newList removeObject:self.conversation.ID];
-        [[LocalDatabaseManager sharedInstance] unmuteConversation:self.conversation.ID forUser:user.ID];
+        [[LocalDatabaseManager sharedInstance] unmuteConversation:self.conversation.ID forUser:user.identifier];
     }
     DIMSharedMessenger *messenger = [DIMGlobal messenger];
     

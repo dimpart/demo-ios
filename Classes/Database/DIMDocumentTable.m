@@ -57,7 +57,7 @@
     if (self = [super init]) {
         _caches = [[NSMutableDictionary alloc] init];
         
-        _empty = [[DIMDocument alloc] initWithID:MKMAnyone() type:MKMDocumentType_Profile];
+        _empty = [[DIMDocument alloc] initWithID:MKMAnyone type:MKMDocumentType_Profile];
     }
     return self;
 }
@@ -92,7 +92,7 @@
             }
             NSString *data = [dict objectForKey:@"data"];
             NSString *signature = [dict objectForKey:@"signature"];
-            id<MKMTransportableData> ted = MKMTransportableDataParse(signature);
+            id<MKTransportableData> ted = MKTransportableDataParse(signature);
             doc = MKMDocumentCreate(type, ID, data, ted);
         }
         if (!doc) {
@@ -123,7 +123,7 @@
         NSLog(@"document not valid: %@", doc);
         return NO;
     }
-    id<MKMID> ID = doc.ID;
+    id<MKMID> ID = doc.identifier;
     // 1. store into memory cache
     [_caches setObject:doc forKey:ID];
     // 2. save into database

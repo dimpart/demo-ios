@@ -123,12 +123,12 @@
         id<MKMID> ID;
         id<MKMMeta> gMeta = DIMMetaForID(group);
         id<MKMMeta> uMeta;
-        id<MKMVerifyKey> PK;
+        id<MKVerifyKey> PK;
         for (NSUInteger index = 0; index < members.count; ++index) {
             ID = [members objectAtIndex:index];
             uMeta = DIMMetaForID(ID);
             PK = [uMeta publicKey];
-            if ([gMeta matchPublicKey:PK]) {
+            if ([DIMMetaUtils meta:gMeta matchPublicKey:PK]) {
                 if (index > 0) {
                     // move to front
                     [members removeObjectAtIndex:index];

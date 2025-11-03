@@ -105,7 +105,7 @@
     CGSize avatarSize = _avatarImageView.bounds.size;
     
     UIImage *image = [profile avatarImageWithSize:avatarSize];
-    NSString *nickname = DIMNameForID(user.ID);
+    NSString *nickname = DIMNameForID(user.identifier);
     
     _avatarImageView.image = image;
     _nicknameTextField.text = nickname;
@@ -127,7 +127,7 @@
     
     DIMVisa *profile = [notification.userInfo objectForKey:@"profile"];
     id<MKMUser> user = [DIMGlobal facebook].currentUser;
-    if (![profile.ID isEqual:user.ID]) {
+    if (![profile.identifier isEqual:user.identifier]) {
         // not my profile
         return ;
     }
@@ -191,12 +191,12 @@
         }
         
         NSData *data = [image jpegDataWithQuality:UIImage_JPEGCompressionQuality_Photo];
-        NSString *filename = [MKMHexEncode(MKMMD5Digest(data)) stringByAppendingPathExtension:@"jpeg"];
+        NSString *filename = [MKHexEncode(MKMD5Digest(data)) stringByAppendingPathExtension:@"jpeg"];
         NSLog(@"avatar data length: %lu, %lu", data.length, [image pngData].length);
         
         DIMSharedFacebook *facebook = [DIMGlobal facebook];
         id<MKMUser> user = [facebook currentUser];
-        id<MKMID> ID = user.ID;
+        id<MKMID> ID = user.identifier;
         id<MKMVisa> visa = user.visa;
         if (!visa) {
             NSAssert(false, @"profile should not be empty");
@@ -211,15 +211,15 @@
         NSURL *url = [ftp uploadAvatar:data filename:filename sender:ID];
         
         // got avatar URL
-        visa.avatar = MKMPortableNetworkFileParse(NSStringFromURL(url));
+        visa.avatar = MKPortableNetworkFileParse(NSStringFromURL(url));
         
         id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-        id<MKMSignKey> SK = [dataSource privateKeyForVisaSignature:user.ID];
-        NSAssert(SK, @"failed to get visa sign key for user: %@", user.ID);
+        id<MKSignKey> SK = [dataSource getPrivateKeyForVisaSignature:user.identifier];
+        NSAssert(SK, @"failed to get visa sign key for user: %@", user.identifier);
         [visa sign:SK];
         
         // save profile with new avatar
-        [facebook saveDocument:visa];
+        [facebook.archivist saveDocument:visa];
         
         // submit to network
         DIMSharedMessenger *messenger = [DIMGlobal messenger];
@@ -227,7 +227,7 @@
         
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc postNotificationName:kNotificationName_AvatarUpdated object:self
-                        userInfo:@{@"ID": visa.ID, @"profile": visa}];
+                        userInfo:@{@"ID": visa.identifier, @"profile": visa}];
     }
 }
 
@@ -250,11 +250,11 @@
     [visa setName:nickname];
     
     id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-    id<MKMSignKey> SK = [dataSource privateKeyForVisaSignature:user.ID];
-    NSAssert(SK, @"failed to get visa sign key for user: %@", user.ID);
+    id<MKSignKey> SK = [dataSource getPrivateKeyForVisaSignature:user.identifier];
+    NSAssert(SK, @"failed to get visa sign key for user: %@", user.identifier);
     [visa sign:SK];
     
-    [[DIMGlobal facebook] saveDocument:visa];
+    [facebook.archivist saveDocument:visa];
     DIMSharedMessenger *messenger = [DIMGlobal messenger];
     
     // submit to station
@@ -264,7 +264,7 @@
     
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc postNotificationName:kNotificationName_AvatarUpdated
-                      object:self userInfo:@{@"ID": user.ID}];
+                      object:self userInfo:@{@"ID": user.identifier}];
     return YES;
 }
 
@@ -280,7 +280,7 @@
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     id<MKMUser> user = [facebook currentUser];
-    id<MKMID> ID = user.ID;
+    id<MKMID> ID = user.identifier;
     
     UITableViewCell *cell = nil;
     
@@ -296,9 +296,9 @@
             cell.textLabel.text = NSLocalizedString(@"Seed", @"title");
             NSString *seed = ID.name;
             if (seed.length == 0) {
-                if ([ID.address isKindOfClass:[MKMAddressETH class]]) {
+                if ([ID.address isKindOfClass:[DIMETHAddress class]]) {
                     seed = @"{ETH Address}";
-                } else if ([ID.address isKindOfClass:[MKMAddressBTC class]]) {
+                } else if ([ID.address isKindOfClass:[DIMBTCAddress class]]) {
                     if (ID.type == MKMNetwork_BTCMain) {
                         seed = @"{BTC Address}";
                     } else {
@@ -363,7 +363,7 @@
                 //Copy search number
             } else if (row == 1) {
                 //Copy address
-                [[UIPasteboard generalPasteboard] setString:user.ID.address.string];
+                [[UIPasteboard generalPasteboard] setString:user.identifier.address.string];
             }
         }
     }
@@ -392,7 +392,7 @@
             //Export Account
             
             DIMFacebook *facebook = [DIMGlobal facebook];
-            id<MKMPrivateKey> key = (id<MKMPrivateKey>)[facebook privateKeyForVisaSignature:user.ID];
+            id<MKPrivateKey> key = (id<MKPrivateKey>)[facebook getPrivateKeyForVisaSignature:user.identifier];
             
             NSString *privateKeyString = [key objectForKey:@"data"];
             

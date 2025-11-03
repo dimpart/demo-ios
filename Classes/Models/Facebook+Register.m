@@ -15,12 +15,13 @@
 @implementation DIMFacebook (Register)
 
 - (BOOL)saveMeta:(id<MKMMeta>)meta
-      privateKey:(id<MKMPrivateKey>)SK
+      privateKey:(id<MKPrivateKey>)SK
            forID:(id<MKMID>)ID {
     
-    NSArray<id<MKMUser>> *array = [self localUsers];
+    id<DIMArchivist> archivist = [self archivist];
+    NSArray<id<MKMID>> *array = [archivist localUsers];
     for (id<MKMUser> item in array) {
-        if ([item.ID isEqual:ID]) {
+        if ([item.identifier isEqual:ID]) {
             NSLog(@"User ID already exists: %@", ID);
             return NO;
         }
@@ -28,7 +29,7 @@
     
     // 1. check & save meta
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
-    if ([facebook saveMeta:meta forID:ID]) {
+    if ([archivist saveMeta:meta withIdentifier:ID]) {
         NSLog(@"meta saved: %@", meta);
     } else {
         NSAssert(false, @"save meta failed: %@, %@", ID, meta);
@@ -36,7 +37,7 @@
     }
     
     // 2. check & save private key
-    id<MKMVerifyKey> PK = [meta publicKey];
+    id<MKVerifyKey> PK = [meta publicKey];
     if ([PK matchSignKey:SK]) {
         if ([facebook savePrivateKey:SK
                             withType:DIMPrivateKeyType_Meta
@@ -65,12 +66,12 @@
 - (BOOL)saveUserList:(NSArray<id<MKMUser>> *)users
      withCurrentUser:(id<MKMUser>)curr {
     NSMutableArray *list = [[NSMutableArray alloc] initWithCapacity:users.count];
-    [list addObject:curr.ID];
+    [list addObject:curr.identifier];
     for (id<MKMUser> user in users) {
-        if ([list containsObject:user.ID]) {
+        if ([list containsObject:user.identifier]) {
             // ignore
         } else {
-            [list addObject:user.ID];
+            [list addObject:user.identifier];
         }
     }
 //    return [self saveUsers:list];

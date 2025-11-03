@@ -110,7 +110,7 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         @try {
-            NSDictionary *dic = MKMJSONDecode(responseString);
+            NSDictionary *dic = MKJsonDecode(responseString);
             
             if (dic != nil && [dic isKindOfClass:[NSDictionary class]]) {
                 
@@ -176,7 +176,7 @@
     NSDictionary *metaData = [[NSDictionary alloc] initWithContentsOfFile:path];
     id<MKMMeta> meta = MKMMetaParse(metaData);
     if (meta) {
-        [facebook saveMeta:meta forID:ID];
+        [facebook.archivist saveMeta:meta forID:ID];
     }
     
     NSString *profilePath = [NSString stringWithFormat:@"%@/profile", address];
@@ -185,7 +185,7 @@
     NSDictionary *profileData = [[NSDictionary alloc] initWithContentsOfFile:path];
     id<MKMDocument> profile = MKMDocumentParse(profileData);
     if (profile) {
-        [facebook saveDocument:profile];
+        [facebook.archivist saveDocument:profile];
     }
 }
 

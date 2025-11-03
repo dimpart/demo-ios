@@ -61,7 +61,7 @@
 //    // post device token
 //    NSString *token = MKMHexEncode(self.deviceToken);
 //    if (token) {
-//        DIMCommand *content = [[DIMCommand alloc] initWithCommandName:@"broadcast"];
+//        DIMCommand *content = [[DIMCommand alloc] initWithCmd:@"broadcast"];
 //        [content setObject:@"apns" forKey:@"title"];
 //        [content setObject:token forKey:@"device_token"];
 //        
@@ -101,7 +101,7 @@
     id<MKMMeta> meta = MKMMetaParse([station objectForKey:@"meta"]);
     
     if (meta) {
-        [facebook saveMeta:meta forID:ID];
+        [facebook.archivist saveMeta:meta forID:ID];
     }
     
     // prepare for launch star
@@ -133,7 +133,7 @@
     // get user from database and login
     id<MKMUser> user = [facebook currentUser];
     if (user) {
-        [self loginUser:user.ID];
+        [self loginUser:user.identifier];
     } else {
         NSLog(@"current user not found");
     }
@@ -225,7 +225,7 @@
 @implementation Client (APNs)
 
 - (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    NSString *token = MKMHexEncode(deviceToken);
+    NSString *token = MKHexEncode(deviceToken);
     NSLog(@"APNs token: %@", deviceToken);
     NSLog(@"APNs token(hex): %@", token);
     // TODO: send this device token to server
@@ -283,7 +283,8 @@
 @implementation Client (API)
 
 - (NSString *)uploadAPI {
-    return @"http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}";
+    return @"http://tfs.dim.chat:8081/{ID}/upload?md5={MD5}&salt={SALT}";
+    //return @"http://106.52.25.169:8081/{ID}/upload?md5={MD5}&salt={SALT}";
     //return @"https://sechat.dim.chat/{ID}/upload";
 }
 
@@ -312,7 +313,7 @@
 
 @implementation Client (Register)
 
-- (BOOL)importUser:(id<MKMID>)ID meta:(id<MKMMeta>)meta privateKey:(id<MKMPrivateKey>)SK {
+- (BOOL)importUser:(id<MKMID>)ID meta:(id<MKMMeta>)meta privateKey:(id<MKPrivateKey>)SK {
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     
@@ -321,16 +322,20 @@
         NSAssert(false, @"failed to save private key for new user: %@", ID);
         return NO;
     }
-    if (![facebook saveMeta:meta forID:ID]) {
+    if (![facebook.archivist saveMeta:meta forID:ID]) {
         NSAssert(false, @"failed to save meta for new user: %@", ID);
         return NO;
     }
     
-    NSArray<id<MKMUser>> *users = [facebook localUsers];
+    NSArray<id<MKMID>> *users = [facebook.archivist localUsers];
     id<MKMUser> user = DIMUserWithID(ID);
     [self loginUser:ID];
     
-    BOOL saved = [facebook saveUserList:users withCurrentUser:user];
+    NSMutableArray<id<MKMUser>> *mArray = [[NSMutableArray alloc] init];
+    for (id<MKMID> item in users) {
+        [mArray addObject:DIMUserWithID(item)];
+    }
+    BOOL saved = [facebook saveUserList:mArray withCurrentUser:user];
     NSAssert(saved, @"failed to save users: %@, current user: %@", users, user);
     
     return saved;

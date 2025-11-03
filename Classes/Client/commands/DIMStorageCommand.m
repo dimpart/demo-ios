@@ -44,7 +44,7 @@
     NSData *_key;
     
     NSData *_plaintext;
-    id<MKMDecryptKey> _password;
+    id<MKDecryptKey> _password;
 }
 
 @end
@@ -52,7 +52,7 @@
 @implementation DIMStorageCommand
 
 /* designated initializer */
-- (instancetype)initWithType:(DKDContentType)type {
+- (instancetype)initWithType:(NSString *)type {
     if (self = [super initWithType:type]) {
         _title = nil;
         _data = nil;
@@ -79,7 +79,7 @@
 }
 
 - (instancetype)initWithTitle:(NSString *)title {
-    if (self = [self initWithCommandName:DIMCommand_Storage]) {
+    if (self = [self initWithCmd:DIMCommand_Storage]) {
         NSAssert([title length] > 0, @"storage title should not be empty");
         NSAssert(![title isEqualToString:DIMCommand_Storage], @"title error: %@", title);
         [self setObject:title forKey:@"title"];
@@ -117,7 +117,7 @@
     if (!_data) {
         NSString *base64 = [self objectForKey:@"data"];
         if (base64) {
-            _data = MKMBase64Decode(base64);
+            _data = MKBase64Decode(base64);
         }
     }
     return _data;
@@ -125,7 +125,7 @@
 
 - (void)setData:(NSData *)data {
     if (data) {
-        [self setObject:MKMBase64Encode(data) forKey:@"data"];
+        [self setObject:MKBase64Encode(data) forKey:@"data"];
     } else {
         [self removeObjectForKey:@"data"];
     }
@@ -137,7 +137,7 @@
     if (!_key) {
         NSString *base64 = [self objectForKey:@"key"];
         if (base64) {
-            _key = MKMBase64Decode(base64);
+            _key = MKBase64Decode(base64);
         }
     }
     return _key;
@@ -145,7 +145,7 @@
 
 - (void)setKey:(NSData *)keyData {
     if (keyData) {
-        [self setObject:MKMBase64Encode(keyData) forKey:@"key"];
+        [self setObject:MKBase64Encode(keyData) forKey:@"key"];
     } else {
         [self removeObjectForKey:@"key"];
     }
@@ -155,8 +155,8 @@
 
 #pragma mark Decryption
 
-- (nullable NSData *)decryptWithSymmetricKey:(id<MKMDecryptKey>)PW {
-    NSAssert([PW conformsToProtocol:@protocol(MKMSymmetricKey)], @"password error: %@", PW);
+- (nullable NSData *)decryptWithSymmetricKey:(id<MKDecryptKey>)PW {
+    NSAssert([PW conformsToProtocol:@protocol(MKSymmetricKey)], @"password error: %@", PW);
     if (!_plaintext) {
         NSAssert(PW, @"password should not be empty");
         NSData *data = self.data;
@@ -166,14 +166,14 @@
     return _plaintext;
 }
 
-- (nullable NSData *)decryptWithPrivateKey:(id<MKMDecryptKey>)SK {
+- (nullable NSData *)decryptWithPrivateKey:(id<MKDecryptKey>)SK {
     if (!_password) {
         NSData *key = self.key;
         NSAssert([key length] > 0, @"key empty: %@", self);
         key = [SK decrypt:key params:self.dictionary];
         NSAssert([key length] > 0, @"failed to decrypt key data: %@ with private key: %@", self, SK);
-        id dict = MKMJSONDecode(MKMUTF8Decode(key));
-        _password = MKMSymmetricKeyParse(dict);
+        id dict = MKJsonDecode(MKUTF8Decode(key));
+        _password = MKSymmetricKeyParse(dict);
     }
     return [self decryptWithSymmetricKey:_password];
 }

@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Client (Register)
 
-- (BOOL)importUser:(id<MKMID>)ID meta:(id<MKMMeta>)meta privateKey:(id<MKMPrivateKey>)SK;
+- (BOOL)importUser:(id<MKMID>)ID meta:(id<MKMMeta>)meta privateKey:(id<MKPrivateKey>)SK;
 
 @end
 

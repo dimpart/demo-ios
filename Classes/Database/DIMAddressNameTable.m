@@ -95,8 +95,8 @@ typedef NSMutableDictionary<NSString *, id<MKMID>> CacheTableM;
     
     id<MKMID> founder = MKMIDParse(moky);
     
-    id<MKMID> anyone = MKMAnyone();
-    id<MKMID> everyone = MKMEveryone();
+    id<MKMID> anyone = MKMAnyone;
+    id<MKMID> everyone = MKMEveryone;
     
     // Reserved names
     [caches setObject:founder forKey:@"founder"];

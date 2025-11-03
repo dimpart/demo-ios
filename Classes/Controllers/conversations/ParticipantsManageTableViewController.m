@@ -14,8 +14,6 @@
 #import "DIMProfile+Extension.h"
 #import "DIMGlobalVariable.h"
 
-#import "DIMSharedGroupManager.h"
-
 #import "Facebook+Profile.h"
 #import "Facebook+Register.h"
 #import "Client.h"
@@ -83,17 +81,17 @@ static inline BOOL check_username(NSString *username) {
         
         // 1.2. name
         _nameTextField.text = name;
-        if (![manager isOwner:user.ID group:_group.ID]) {
+        if (![manager isOwner:user.identifier group:_group.identifier]) {
             _nameTextField.enabled = NO;
         }
         
         // 1.3. seed
-        _seedTextField.text = _group.ID.name;
+        _seedTextField.text = _group.identifier.name;
         _seedTextField.enabled = NO;
     } else {
         // new group
         _group = nil;
-        _founder = user.ID;
+        _founder = [user identifier];
         // Notice: the group member list will/will not include the founder
         _memberList = [[NSArray alloc] initWithObjects:_conversation.ID, nil];
         
@@ -114,8 +112,8 @@ static inline BOOL check_username(NSString *username) {
     
     // 3. selected list
     _selectedList = [[NSMutableArray alloc] init];
-    [_selectedList addObject:user.ID];
-    if (_founder && ![_founder isEqual:user.ID]) {
+    [_selectedList addObject:user.identifier];
+    if (_founder && ![_founder isEqual:user.identifier]) {
         [_selectedList addObject:_founder];
     }
     if (!_group && MKMIDIsUser(_conversation.ID)) {
@@ -136,7 +134,7 @@ static inline BOOL check_username(NSString *username) {
 -(NSArray <id<MKMID>> *)groupMemberCandidates:(id<MKMGroup>)group currentUser:(id<MKMUser>)user {
     id<MKMID> founder = group.founder;
     NSArray<id<MKMID>> *members = group.members;
-    id<MKMID> current = user.ID;
+    id<MKMID> current = user.identifier;
     NSArray<id<MKMID>> *contacts = user.contacts;
     
     NSMutableArray *filterContacts = [[NSMutableArray alloc] init];
@@ -196,8 +194,8 @@ static inline BOOL check_username(NSString *username) {
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     id<MKMUser> user = [facebook currentUser];
     id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-    id<MKMSignKey> signKey = [dataSource privateKeyForVisaSignature:user.ID];
-    NSAssert(signKey, @"failed to get visa sign key for user: %@", user.ID);
+    id<MKSignKey> signKey = [dataSource getPrivateKeyForVisaSignature:user.identifier];
+    NSAssert(signKey, @"failed to get visa sign key for user: %@", user);
 
 //    id<MKMID> ID = _conversation.ID;
 //    NSString *seed = _seedTextField.text;
@@ -283,7 +281,7 @@ static inline BOOL check_username(NSString *username) {
     NSString *name;
     NSArray *list = [_selectedList copy];
     for (ID in list) {
-        name = [facebook nameForID:ID];
+        name = [facebook getName:ID];
         [mArray addObject:name];
     }
     NSString *message = [mArray componentsJoinedByString:@"\n"];
@@ -433,15 +431,15 @@ static inline BOOL check_username(NSString *username) {
         cell.participant = contact;
         
         DIMSharedGroupManager *manager = [DIMSharedGroupManager sharedInstance];
-        if (_group && ![manager isOwner:user.ID group:_group.ID] &&
+        if (_group && ![manager isOwner:user.identifier group:_group.identifier] &&
             [_memberList containsObject:contact]) {
             // fixed
             [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             cell.userInteractionEnabled = NO;
         } else if ([contact isEqual:_founder] ||
-                   [manager isOwner:contact group:_group.ID] ||
-                   [contact isEqual:user.ID]) {
+                   [manager isOwner:contact group:_group.identifier] ||
+                   [contact isEqual:user.identifier]) {
             // fixed
             [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
             cell.accessoryType = UITableViewCellAccessoryCheckmark;

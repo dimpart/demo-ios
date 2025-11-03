@@ -47,8 +47,8 @@
     for (NSString *item in contacts) {
         ID = MKMIDParse(item);
         // request contact/group meta and save to local
-        [facebook metaForID:ID];
-        [facebook addContact:ID user:user.ID];
+        [facebook getMeta:ID];
+        [facebook addContact:ID user:user.identifier];
     }
     // no need to respond this command
     return nil;
@@ -57,19 +57,19 @@
 - (NSArray<id<DKDContent>> *)decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(id<MKMUser>)user {
     // decrypt key
     key = [user decrypt:key];
-    id dict = MKMJSONDecode(MKMUTF8Decode(key));
-    id<MKMSymmetricKey> password = MKMSymmetricKeyParse(dict);
+    id dict = MKJsonDecode(MKUTF8Decode(key));
+    id<MKSymmetricKey> password = MKSymmetricKeyParse(dict);
     // decrypt data
     data = [password decrypt:data params:nil];  // FIXME: load 'IV'
     NSAssert([data length] > 0, @"failed to decrypt contacts data with key: %@", password);
-    NSArray *contacts = MKMJSONDecode(MKMUTF8Decode(data));
+    NSArray *contacts = MKJsonDecode(MKUTF8Decode(data));
     NSAssert(contacts, @"failed to decrypt contacts");
     return [self saveContacts:contacts forUser:user];
 }
 
 - (NSArray<id<DKDContent>> *)processContactsCommand:(DIMStorageCommand *)content sender:(id<MKMID>)sender {
     id<MKMUser> user = [self.facebook currentUser];
-    if (![user.ID isEqual:content.ID]) {
+    if (![user.identifier isEqual:content.ID]) {
         NSAssert(false, @"current user %@ not match %@ contacts not saved", user, content.ID);
         return nil;
     }

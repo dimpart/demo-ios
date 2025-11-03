@@ -62,25 +62,25 @@
 }
 
 - (DIMConversationType)type {
-    if (MKMIDIsUser(_entity.ID)) {
+    if (MKMIDIsUser(_entity.identifier)) {
         return DIMConversationPersonal;
-    } else if (MKMIDIsGroup(_entity.ID)) {
+    } else if (MKMIDIsGroup(_entity.identifier)) {
         return DIMConversationGroup;
     }
     return DIMConversationUnknown;
 }
 
 - (id<MKMID>)ID {
-    return _entity.ID;
+    return _entity.identifier;
 }
 
 - (NSString *)name {
-    return DIMNameForID(_entity.ID);
+    return DIMNameForID(_entity.identifier);
 }
 
 - (NSString *)title {
     DIMConversationType type = self.type;
-    NSString *name = DIMNameForID(_entity.ID);
+    NSString *name = DIMNameForID(_entity.identifier);
     if (type == DIMConversationPersonal) {
         // "xxx"
         return name;
@@ -105,29 +105,26 @@
 }
 
 - (id<DKDInstantMessage>)lastMessage {
-    return [_dataSource lastMessageInConversation:_entity.ID];
+    return [_dataSource lastMessageInConversation:_entity.identifier];
 }
 
 - (id<DKDInstantMessage>)lastVisibleMessage {
     NSInteger count = [self numberOfMessage];
     id<DKDInstantMessage> iMsg;
+    NSString *type;
     for (NSInteger index = count - 1; index >= 0; --index) {
         iMsg = [self messageAtIndex:index];
-        switch (iMsg.type) {
-            case DKDContentType_Text:
-            case DKDContentType_File:
-            case DKDContentType_Image:
-            case DKDContentType_Audio:
-            case DKDContentType_Video:
-            case DKDContentType_Page:
-            case DKDContentType_Money:
-            case DKDContentType_Transfer:
-                // got it
-                return iMsg;
-                break;
-                
-            default:
-                break;
+        type = [iMsg type];
+        if ([type isEqualToString:DKDContentType_Text] ||
+            [type isEqualToString:DKDContentType_File] ||
+            [type isEqualToString:DKDContentType_Image] ||
+            [type isEqualToString:DKDContentType_Audio] ||
+            [type isEqualToString:DKDContentType_Video] ||
+            [type isEqualToString:DKDContentType_Page] ||
+            [type isEqualToString:DKDContentType_Money] ||
+            [type isEqualToString:DKDContentType_Transfer]) {
+            // got it
+            return iMsg;
         }
     }
     return nil;

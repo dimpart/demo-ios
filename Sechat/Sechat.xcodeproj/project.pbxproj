@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -159,7 +159,6 @@
 		E9AE7F1629BD7CA0008D9F33 /* DIMStorageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AE7EFF29BD7CA0008D9F33 /* DIMStorageCommand.m */; };
 		E9AE7F1729BD7CA0008D9F33 /* DIMSearchCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AE7F0029BD7CA0008D9F33 /* DIMSearchCommand.m */; };
 		E9AE7F1829BD7CA0008D9F33 /* DIMSharedPacker.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AE7F0229BD7CA0008D9F33 /* DIMSharedPacker.m */; };
-		E9BB6C042B2D618E0038374C /* DIMSharedGroupManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BB6C032B2D618E0038374C /* DIMSharedGroupManager.m */; };
 		E9BBC37E2242B21200E6ACDA /* UIViewController+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC3742242B21200E6ACDA /* UIViewController+Extension.m */; };
 		E9BBC37F2242B21200E6ACDA /* UIImage+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC3752242B21200E6ACDA /* UIImage+Extension.m */; };
 		E9BBC3802242B21200E6ACDA /* UIImageView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC3772242B21200E6ACDA /* UIImageView+Extension.m */; };
@@ -420,8 +419,6 @@
 		E9AE7F0229BD7CA0008D9F33 /* DIMSharedPacker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMSharedPacker.m; sourceTree = "<group>"; };
 		E9AE7F0329BD7CA0008D9F33 /* DIMMessageDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMMessageDataSource.h; sourceTree = "<group>"; };
 		E9AE7F0429BD7CA0008D9F33 /* DIMAmanuensis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMAmanuensis.h; sourceTree = "<group>"; };
-		E9BB6C022B2D618E0038374C /* DIMSharedGroupManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMSharedGroupManager.h; sourceTree = "<group>"; };
-		E9BB6C032B2D618E0038374C /* DIMSharedGroupManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMSharedGroupManager.m; sourceTree = "<group>"; };
 		E9BBC3712242B21200E6ACDA /* DIMProfile+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMProfile+Extension.h"; sourceTree = "<group>"; };
 		E9BBC3722242B21200E6ACDA /* UIImageView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Extension.h"; sourceTree = "<group>"; };
 		E9BBC3732242B21200E6ACDA /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
@@ -857,8 +854,6 @@
 				E9DBAD0C29BEECA30077C513 /* DIMEmitter.m */,
 				E9AE7EFB29BD7CA0008D9F33 /* DIMSharedFacebook.h */,
 				E9AE7EDF29BD7CA0008D9F33 /* DIMSharedFacebook.m */,
-				E9BB6C022B2D618E0038374C /* DIMSharedGroupManager.h */,
-				E9BB6C032B2D618E0038374C /* DIMSharedGroupManager.m */,
 				E9AE7EF829BD7CA0008D9F33 /* DIMSharedMessenger.h */,
 				E9AE7EDB29BD7CA0008D9F33 /* DIMSharedMessenger.m */,
 				E9E106D729C072280032D5F5 /* DIMSharedSession.h */,
@@ -1168,9 +1163,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Sechat/Pods-Sechat-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Sechat/Pods-Sechat-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1229,9 +1228,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-DIMTalk/Pods-DIMTalk-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-DIMTalk/Pods-DIMTalk-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1330,7 +1333,6 @@
 				E92255D52222EC56006CADEA /* main.m in Sources */,
 				E922564A2222ED7C006CADEA /* Client.m in Sources */,
 				E9060E8B22677FE80000DA35 /* UIScrollView+Extension.m in Sources */,
-				E9BB6C042B2D618E0038374C /* DIMSharedGroupManager.m in Sources */,
 				5242949923347ED300E8DA05 /* SentMessageCell.m in Sources */,
 				5242949B23347ED300E8DA05 /* GuideCell.m in Sources */,
 				E9AE7EB529BD7C41008D9F33 /* FMDatabaseAdditions.m in Sources */,
