@@ -63,8 +63,8 @@
         NSLog(@"meta query not expired yet: %@", ID);
         return NO;
     }
-//    id<DKDContent> content = DIMMetaCommandQuery(ID);
-//    [transmitter sendContent:content sender:nil receiver:MKMAnyStation priority:1];
+    id<DKDContent> content = DIMMetaCommandQuery(ID);
+    [transmitter sendContent:content sender:nil receiver:MKMAnyStation priority:1];
     return YES;
 }
 
@@ -81,9 +81,9 @@
         NSLog(@"document query not expired yet: %@", ID);
         return NO;
     }
-//    NSDate *lastTime = [self lastTimeOfDocuments:docs forID:ID];
-//    id<DKDContent> content = DIMDocumentCommandQuery(ID, lastTime);
-//    [transmitter sendContent:content sender:nil receiver:MKMAnyStation priority:1];
+    NSDate *lastTime = [self lastTimeOfDocuments:docs forID:ID];
+    id<DKDContent> content = DIMDocumentCommandQuery(ID, lastTime);
+    [transmitter sendContent:content sender:nil receiver:MKMAnyStation priority:1];
     return YES;
 }
 

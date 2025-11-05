@@ -173,7 +173,7 @@
                 NSString *title = page.title;
                 NSString *desc = page.desc;
                 NSURL *url = page.URL;
-                NSData *icon = page.icon;
+                id<MKPortableNetworkFile> icon = page.icon;
                 
                 // title
                 title = [title stringByAppendingString:@"\n"];
@@ -184,8 +184,8 @@
                 }
                 // icon
                 UIImage *image = nil;
-                if (icon.length > 0) {
-                    image = [UIImage imageWithData:icon];
+                if (![icon isEmpty]) {
+                    image = [UIImage imageWithData:icon.data];
                 }
                 
                 NSMutableAttributedString *attrText;

@@ -222,7 +222,7 @@
     [visa setName:self.nickname];
     
     id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-    id<MKSignKey> SK = [dataSource getPrivateKeyForVisaSignature:user.identifier];
+    id<MKSignKey> SK = [dataSource privateKeyForVisaSignature:user.identifier];
     NSAssert(SK, @"failed to get visa sign key for user: %@", user.identifier);
     [visa sign:SK];
     
@@ -244,8 +244,8 @@
     DIMRegister *reg = [[DIMRegister alloc] initWithDatabase:adb];
     id<MKMID> ID = [reg createUserWithName:self.nickname avatar:nil];
     
-    id<MKSignKey> SK = [facebook getPrivateKeyForVisaSignature:ID];
-    id<MKMUser> user = [facebook getUser:ID];
+    id<MKSignKey> SK = [facebook privateKeyForVisaSignature:ID];
+    id<MKMUser> user = [facebook user:ID];
     facebook.currentUser = user;
 
     // 1. generated private key

@@ -72,7 +72,7 @@
         NSAssert([content objectForKey:@"URL"], @"Web content error: %@", content);
         text = @"Web page received";
     } else {
-        text = [NSString stringWithFormat:@"Content (type: %d) not support yet!", content.type];
+        text = [NSString stringWithFormat:@"Content (type: %@) not support yet!", content.type];
         return [super processContent:content withMessage:rMsg];
     }
     

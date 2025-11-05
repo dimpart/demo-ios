@@ -214,7 +214,7 @@
         visa.avatar = MKPortableNetworkFileParse(NSStringFromURL(url));
         
         id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-        id<MKSignKey> SK = [dataSource getPrivateKeyForVisaSignature:user.identifier];
+        id<MKSignKey> SK = [dataSource privateKeyForVisaSignature:user.identifier];
         NSAssert(SK, @"failed to get visa sign key for user: %@", user.identifier);
         [visa sign:SK];
         
@@ -250,7 +250,7 @@
     [visa setName:nickname];
     
     id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-    id<MKSignKey> SK = [dataSource getPrivateKeyForVisaSignature:user.identifier];
+    id<MKSignKey> SK = [dataSource privateKeyForVisaSignature:user.identifier];
     NSAssert(SK, @"failed to get visa sign key for user: %@", user.identifier);
     [visa sign:SK];
     
@@ -392,7 +392,7 @@
             //Export Account
             
             DIMFacebook *facebook = [DIMGlobal facebook];
-            id<MKPrivateKey> key = (id<MKPrivateKey>)[facebook getPrivateKeyForVisaSignature:user.identifier];
+            id<MKPrivateKey> key = (id<MKPrivateKey>)[facebook privateKeyForVisaSignature:user.identifier];
             
             NSString *privateKeyString = [key objectForKey:@"data"];
             

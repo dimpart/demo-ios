@@ -98,7 +98,7 @@
     [super viewDidLoad];
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
-    [facebook getDocuments:_contact];
+    [facebook documents:_contact];
     
     NSString *name = DIMNameForID(_contact);
     self.nicknameLabel.text = name;
@@ -172,7 +172,7 @@
             [facebook addContact:self.contact user:user.identifier];
             
             //Post contacts to server
-            NSArray<id<MKMID>> *allContacts = [[DIMGlobal facebook] getContacts:user.identifier];
+            NSArray<id<MKMID>> *allContacts = [[DIMGlobal facebook] contacts:user.identifier];
             
             DIMSharedMessenger *messenger = [DIMGlobal messenger];
             [messenger postContacts:allContacts];

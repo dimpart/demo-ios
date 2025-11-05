@@ -65,7 +65,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
     return self;
 }
 
-- (DIMArchivist *)archivist {
+- (id<DIMArchivist>)archivist {
     DIMGlobalVariable *shared = [DIMGlobalVariable sharedInstance];
     return [shared archivist];
 }
@@ -112,7 +112,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
 
 - (OKPair<NSString *, NSString *> *)avatarForUser:(id<MKMID>)user {
     id<MKPortableNetworkFile> avatar;
-    id<MKMDocument> doc = [self getDocument:user withType:@"*"];
+    id<MKMDocument> doc = [self document:user forType:@"*"];
     if (doc) {
         if ([doc conformsToProtocol:@protocol(MKMVisa)]) {
             avatar = [(id<MKMVisa>)doc avatar];

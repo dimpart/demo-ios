@@ -100,13 +100,20 @@
 // Override
 - (id<DKDReliableMessage>)sendInstantMessage:(id<DKDInstantMessage>)iMsg
                                     priority:(NSInteger)prior {
+    DIMContent *content = (DIMContent *)[iMsg content];
+    if ([content conformsToProtocol:@protocol(DKDCommand)]) {
+        id<DKDCommand> command = (id<DKDCommand>)content;
+        if ([command.cmd isEqualToString:DIMCommand_Handshake]) {
+            // NOTICE: only handshake message can go out
+            [iMsg setObject:@"handshaking" forKey:@"pass"];
+        }
+    }
     // send message (secured + certified) to target station
     id<DKDSecureMessage> sMsg = [self encryptMessage:iMsg];
     if (!sMsg) {
         // FIXME: public key not found?
         return nil;
     }
-    DIMContent *content = (DIMContent *)[iMsg content];
     id<DKDReliableMessage> rMsg = [self signMessage:sMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to sign message: %@", sMsg);

@@ -81,7 +81,7 @@ OKSingletonImplementations(DIMMessageDataSource, sharedInstance)
     DIMFacebook *facebook = [DIMGlobal facebook];
     if (MKMIDIsUser(ID)) {
         // check user
-        if (![facebook getPublicKeyForEncryption:ID]) {
+        if (![facebook publicKeyForEncryption:ID]) {
             NSLog(@"user not ready yet: %@", ID);
             return;
         }

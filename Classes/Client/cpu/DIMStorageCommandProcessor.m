@@ -47,7 +47,7 @@
     for (NSString *item in contacts) {
         ID = MKMIDParse(item);
         // request contact/group meta and save to local
-        [facebook getMeta:ID];
+        [facebook meta:ID];
         [facebook addContact:ID user:user.identifier];
     }
     // no need to respond this command

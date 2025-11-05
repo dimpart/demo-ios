@@ -194,7 +194,7 @@ static inline BOOL check_username(NSString *username) {
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     id<MKMUser> user = [facebook currentUser];
     id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-    id<MKSignKey> signKey = [dataSource getPrivateKeyForVisaSignature:user.identifier];
+    id<MKSignKey> signKey = [dataSource privateKeyForVisaSignature:user.identifier];
     NSAssert(signKey, @"failed to get visa sign key for user: %@", user);
 
 //    id<MKMID> ID = _conversation.ID;
