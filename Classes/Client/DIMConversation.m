@@ -70,7 +70,7 @@
     return DIMConversationUnknown;
 }
 
-- (id<MKMID>)ID {
+- (id<MKMID>)identifier {
     return _entity.identifier;
 }
 
@@ -132,39 +132,39 @@
 
 - (NSInteger)numberOfMessage {
     NSAssert(_dataSource, @"set data source handler first");
-    return [_dataSource numberOfMessagesInConversation:self.ID];
+    return [_dataSource numberOfMessagesInConversation:self.identifier];
 }
 
 - (NSInteger)numberOfUnreadMessages {
     NSAssert(_dataSource, @"set data source handler first");
-    return [_dataSource numberOfUnreadMessagesInConversation:self.ID];
+    return [_dataSource numberOfUnreadMessagesInConversation:self.identifier];
 }
 
 - (id<DKDInstantMessage>)messageAtIndex:(NSInteger)index {
     NSAssert(_dataSource, @"set data source handler first");
-    return [_dataSource conversation:self.ID messageAtIndex:index];
+    return [_dataSource conversation:self.identifier messageAtIndex:index];
 }
 
 #pragma mark - Write via delegate
 
 - (BOOL)insertMessage:(id<DKDInstantMessage>)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    return [_delegate conversation:self.ID insertMessage:iMsg];
+    return [_delegate conversation:self.identifier insertMessage:iMsg];
 }
 
 - (BOOL)removeMessage:(id<DKDInstantMessage>)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    return [_delegate conversation:self.ID removeMessage:iMsg];
+    return [_delegate conversation:self.identifier removeMessage:iMsg];
 }
 
 - (BOOL)withdrawMessage:(id<DKDInstantMessage>)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    return [_delegate conversation:self.ID withdrawMessage:iMsg];
+    return [_delegate conversation:self.identifier withdrawMessage:iMsg];
 }
 
 - (BOOL)saveReceipt:(id<DKDInstantMessage>)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    return [_delegate conversation:self.ID saveReceipt:iMsg];
+    return [_delegate conversation:self.identifier saveReceipt:iMsg];
 }
 
 @end

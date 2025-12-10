@@ -49,7 +49,7 @@
         return nil;
     }
     
-    id<MKMID> ID = MKMIDParse([dict objectForKey:@"ID"]);
+    id<MKMID> ID = MKMIDParse([dict objectForKey:@"did"]);
     id<MKMMeta> meta = MKMMetaParse([dict objectForKey:@"meta"]);
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
@@ -65,7 +65,7 @@
     id profile = [dict objectForKey:@"profile"];
     if (profile) {
         // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
+        if (![profile objectForKey:@"did"]) {
             NSMutableDictionary *mDict;
             if ([profile isKindOfClass:[NSMutableDictionary class]]) {
                 mDict = (NSMutableDictionary *) profile;
@@ -73,7 +73,7 @@
                 mDict = [profile mutableCopy];
                 profile = mDict;
             }
-            [mDict setObject:ID forKey:@"ID"];
+            [mDict setObject:ID forKey:@"did"];
         }
         profile = MKMDocumentParse(profile);
         [facebook.archivist saveDocument:profile];

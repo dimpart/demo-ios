@@ -59,11 +59,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)removeUser:(id<MKMID>)user;
 
-- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)user;
+- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts forUser:(id<MKMID>)user;
 
-- (BOOL)addContact:(id<MKMID>)contact user:(id<MKMID>)user;
+- (BOOL)addContact:(id<MKMID>)contact forUser:(id<MKMID>)user;
 
-- (BOOL)removeContact:(id<MKMID>)contact user:(id<MKMID>)user;
+- (BOOL)removeContact:(id<MKMID>)contact forUser:(id<MKMID>)user;
 
 @end
 

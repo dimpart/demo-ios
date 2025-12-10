@@ -41,9 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMGroupTable <DIMGroupDBI>
 
-- (BOOL)addMember:(id<MKMID>)member group:(id<MKMID>)group;
+- (BOOL)addMember:(id<MKMID>)member forGroup:(id<MKMID>)group;
 
-- (BOOL)removeMember:(id<MKMID>)member group:(id<MKMID>)group;
+- (BOOL)removeMember:(id<MKMID>)member forGroup:(id<MKMID>)group;
 
 - (BOOL)removeGroup:(id<MKMID>)group;
 

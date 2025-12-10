@@ -70,7 +70,7 @@
 }
 
 - (void)setConversation:(DIMConversation *)conversation {
-    if (![_conversation.ID isEqual:conversation.ID]) {
+    if (![_conversation.identifier isEqual:conversation.identifier]) {
         _conversation = conversation;
         [self loadData];
         [self setNeedsLayout];
@@ -80,7 +80,11 @@
 - (void)onProfileUpdate:(NSNotification *)o {
     NSDictionary *profileDic = [o userInfo];
     id<MKMID> ID = [profileDic objectForKey:@"ID"];
-    if ([ID isEqual:self.conversation.ID]) {
+    if (!ID) {
+        ID = [profileDic objectForKey:@"did"];
+    }
+    
+    if ([ID isEqual:self.conversation.identifier]) {
         [NSObject performBlockOnMainThread:^{
             [self loadData];
             [self setNeedsLayout];
@@ -91,7 +95,11 @@
 - (void)onConversationUpdated:(NSNotification *)o {
     NSDictionary *info = [o userInfo];
     id<MKMID> ID = MKMIDParse([info objectForKey:@"ID"]);
-    if ([_conversation.ID isEqual:ID]) {
+    if (!ID) {
+        ID = [info objectForKey:@"did"];
+    }
+    
+    if ([_conversation.identifier isEqual:ID]) {
         [NSObject performBlockOnMainThread:^{
             [self loadData];
             [self setNeedsLayout];
@@ -100,12 +108,12 @@
 }
 
 - (void)loadData {
-    id<MKMDocument> doc = DIMDocumentForID(_conversation.ID, @"*");
+    id<MKMDocument> doc = DIMDocumentForID(_conversation.identifier, @"*");
     
     // avatar
     CGRect frame = _avatarImageView.frame;
     UIImage *image;
-    if (MKMIDIsGroup(_conversation.ID)) {
+    if (MKMIDIsGroup(_conversation.identifier)) {
         image = [(DIMBulletin *)doc logoImageWithSize:frame.size];
     } else {
         image = [(DIMVisa *)doc avatarImageWithSize:frame.size];
@@ -114,7 +122,7 @@
     [_avatarImageView setImage:image];
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
-    _nameLabel.text = [facebook getName:_conversation.ID];
+    _nameLabel.text = [facebook getName:_conversation.identifier];
 
     // last message
     NSString *last = nil;
@@ -140,7 +148,7 @@
     self.lastTimeLabel.text = [self dateString:date];
     
     //Unread Message
-    NSInteger unreadCount = [[LocalDatabaseManager sharedInstance] getUnreadMessageCount:_conversation.ID];
+    NSInteger unreadCount = [[LocalDatabaseManager sharedInstance] getUnreadMessageCount:_conversation.identifier];
     
     if(unreadCount > 0 && unreadCount <= 99){
         self.badgeView.badgeValue = [NSString stringWithFormat:@"%zd", unreadCount];

@@ -199,7 +199,7 @@
     return contacts;
 }
 
-- (BOOL)_saveContacts:(NSMutableArray<id<MKMID>> *)contacts user:(id<MKMID>)user {
+- (BOOL)_saveContacts:(NSMutableArray<id<MKMID>> *)contacts forUser:(id<MKMID>)user {
     // update cache
     [_caches setObject:contacts forKey:user];
     
@@ -223,19 +223,19 @@
 }
 
 // Override
-- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)user {
+- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts forUser:(id<MKMID>)user {
     NSMutableArray *mArray;
     if ([contacts isKindOfClass:[NSMutableArray class]]) {
         mArray = (NSMutableArray *)contacts;
     } else {
         mArray = [contacts mutableCopy];
     }
-    return [self _saveContacts:mArray user:user];
+    return [self _saveContacts:mArray forUser:user];
 }
 
 #pragma mark Contact Table
 
-- (BOOL)addContact:(id<MKMID>)contact user:(id<MKMID>)user {
+- (BOOL)addContact:(id<MKMID>)contact forUser:(id<MKMID>)user {
     NSMutableArray<id<MKMID>> *allContacts = [self _loadContacts:user];
     NSInteger pos = [allContacts indexOfObject:contact];
     if (pos != NSNotFound) {
@@ -243,10 +243,10 @@
         return NO;
     }
     [allContacts addObject:contact];
-    return [self _saveContacts:allContacts user:user];
+    return [self _saveContacts:allContacts forUser:user];
 }
 
-- (BOOL)removeContact:(id<MKMID>)contact user:(id<MKMID>)user {
+- (BOOL)removeContact:(id<MKMID>)contact forUser:(id<MKMID>)user {
     NSMutableArray<id<MKMID>> *allContacts = [self _loadContacts:user];
     NSInteger pos = [allContacts indexOfObject:contact];
     if (pos == NSNotFound) {
@@ -254,7 +254,7 @@
         return NO;
     }
     [allContacts removeObjectAtIndex:pos];
-    return [self _saveContacts:allContacts user:user];
+    return [self _saveContacts:allContacts forUser:user];
 }
 
 @end

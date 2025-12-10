@@ -85,6 +85,9 @@
     
     NSDictionary *userInfo = [o userInfo];
     id<MKMID> ID = [userInfo objectForKey:@"ID"];
+    if (!ID) {
+        ID = [userInfo objectForKey:@"did"];
+    }
     
     [NSObject performBlockOnMainThread:^{
         id<DKDEnvelope> env = self.message.envelope;

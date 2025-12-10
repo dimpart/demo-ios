@@ -47,7 +47,7 @@
 - (NSString *)nameForID:(id<MKMID>)ID {
     // get name from document
     id<MKMDocument> doc = DIMDocumentForID(ID, @"*");
-    NSString *nickname = doc.name;
+    NSString *nickname = [doc propertyForKey:@"name"];
     if ([nickname length] > 0) {
         return nickname;
     }
@@ -171,7 +171,7 @@
 
 - (NSString *)textFromLoginCommand:(id<DKDLoginCommand>)content
                             sender:(id<MKMID>)commander {
-    id<MKMID> ID = content.ID;
+    id<MKMID> ID = [content identifier];
     NSDictionary *station = content.stationInfo;
     NSString *format = NSLocalizedString(@"%@ login: %@", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(ID), station];

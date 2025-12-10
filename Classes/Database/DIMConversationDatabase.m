@@ -118,14 +118,14 @@ OKSingletonImplementations(DIMConversationDatabase, sharedInstance)
     return [_messageTable conversation:chatBox insertMessage:iMsg];
     
 //    NSArray<id<DKDInstantMessage>> *messages;
-//    messages = [_messageTable messagesInConversation:chatBox.ID];
+//    messages = [_messageTable messagesInConversation:chatBox.identifier];
 //    if (!messages) {
 //        messages = [[NSMutableArray alloc] initWithCapacity:1];
 //    }
 //    [(NSMutableArray *)messages addObject:iMsg];
 //
 //    // TODO: Burn After Reading
-//    return [_messageTable saveMessages:messages conversation:chatBox.ID];
+//    return [_messageTable saveMessages:messages conversation:chatBox.identifier];
 }
 
 - (BOOL)conversation:(id<MKMID>)chatBox removeMessage:(id<DKDInstantMessage>)iMsg {

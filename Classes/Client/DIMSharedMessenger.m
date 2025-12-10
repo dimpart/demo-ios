@@ -103,7 +103,7 @@
     DIMContent *content = (DIMContent *)[iMsg content];
     if ([content conformsToProtocol:@protocol(DKDCommand)]) {
         id<DKDCommand> command = (id<DKDCommand>)content;
-        if ([command.cmd isEqualToString:DIMCommand_Handshake]) {
+        if ([command.cmd isEqualToString:DKDCommand_Handshake]) {
             // NOTICE: only handshake message can go out
             [iMsg setObject:@"handshaking" forKey:@"pass"];
         }
@@ -205,18 +205,18 @@
 - (BOOL)postContacts:(NSArray<id<MKMID>> *)contacts {
     id<MKMUser> user = [self.facebook currentUser];
     NSAssert(user, @"current user empty");
+    id<DKDStorageCommand> cmd;
+    cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
     // 1. generate password
     id<MKSymmetricKey> password = MKSymmetricKeyGenerate(MKSymmetricAlgorithm_AES);
     // 2. encrypt contacts list
     NSData *data = MKUTF8Encode(MKJsonEncode(MKMIDRevert(contacts)));
-    data = [password encrypt:data extra:nil];  // FIXME: store 'IV'
+    data = [password encrypt:data extra:cmd.dictionary];
     // 3. encrypt key
     NSData *key = MKUTF8Encode(MKJsonEncode(password.dictionary));
     key = [user encrypt:key];
     // 4. pack 'storage' command
-    id<DKDStorageCommand> cmd;
-    cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
-    [cmd setID:user.identifier];
+    [cmd setIdentifier:user.identifier];
     [cmd setData:data];
     [cmd setKey:key];
     // 5. send to current station
@@ -233,7 +233,7 @@
     // pack 'contacts' command
     id<DKDStorageCommand> cmd;
     cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
-    [cmd setID:user.identifier];
+    [cmd setIdentifier:user.identifier];
     // send to current station
     return [self sendCommand:cmd priority:STDeparturePrioritySlower];
 }

@@ -49,12 +49,12 @@ NS_ASSUME_NONNULL_BEGIN
 #define DIMGlobal                [DIMGlobalVariable sharedInstance]
 
 #define DIMNameForID(ID)         [[DIMGlobal facebook] getName:(ID)]
-#define DIMMetaForID(ID)         [[DIMGlobal facebook] meta:(ID)]
+#define DIMMetaForID(ID)         [[DIMGlobal facebook] metaForID:(ID)]
 #define DIMDocumentForID(ID, DT) [[DIMGlobal facebook] document:(ID) forType:(DT)]
 #define DIMVisaForID(ID)         DIMDocumentForID(ID, MKMDocumentType_Visa)
 
-#define DIMUserWithID(ID)        [[DIMGlobal facebook] user:(ID)]
-#define DIMGroupWithID(ID)       [[DIMGlobal facebook] group:(ID)]
+#define DIMUserWithID(ID)        [[DIMGlobal facebook] userForID:(ID)]
+#define DIMGroupWithID(ID)       [[DIMGlobal facebook] groupForID:(ID)]
 
 @interface DIMGlobalVariable : NSObject
 

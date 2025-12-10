@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 //
 //  user ID
 //
-@property (strong, nonatomic, nullable) id<MKMID> ID;
+@property (strong, nonatomic, nullable) id<MKMID> identifier;
 
 //
 //  Encrypted data

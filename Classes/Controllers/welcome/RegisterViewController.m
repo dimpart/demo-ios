@@ -31,7 +31,7 @@
 
 @property (strong, nonatomic) id<MKPrivateKey> SK;
 @property (strong, nonatomic) id<MKMMeta> meta;
-@property (strong, nonatomic) id<MKMID> ID;
+@property (strong, nonatomic) id<MKMID> identifier;
 
 @property (strong, nonatomic) UIButton *changeButton;
 @property (strong, nonatomic) UILabel *avatarLabel;
@@ -245,7 +245,7 @@
     id<MKMID> ID = [reg createUserWithName:self.nickname avatar:nil];
     
     id<MKSignKey> SK = [facebook privateKeyForVisaSignature:ID];
-    id<MKMUser> user = [facebook user:ID];
+    id<MKMUser> user = [facebook userForID:ID];
     facebook.currentUser = user;
 
     // 1. generated private key
@@ -261,8 +261,8 @@
     }
 
     // 3. generated ID
-    self.ID = user.identifier;
-    if (self.ID == nil) {
+    self.identifier = user.identifier;
+    if (self.identifier == nil) {
         return [NSError errorWithDomain:@"chat.dim" code:1 userInfo:@{NSLocalizedDescriptionKey: @"Can not generate ID"}];
     }
 

@@ -84,6 +84,10 @@
 - (void)didAvatarUpdated:(NSNotification *)o {
     NSDictionary *userInfo = [o userInfo];
     id<MKMID> ID = [userInfo objectForKey:@"ID"];
+    if (!ID) {
+        ID = [userInfo objectForKey:@"did"];
+    }
+    
     if ([ID isEqual:self.contact]) {
         [NSObject performBlockOnMainThread:^{
             [self setData];
@@ -95,6 +99,10 @@
 - (void)didProfileUpdated:(NSNotification *)o {
     NSDictionary *profileDic = [o userInfo];
     id<MKMID> ID = [profileDic objectForKey:@"ID"];
+    if (!ID) {
+        ID = [profileDic objectForKey:@"did"];
+    }
+    
     if ([ID isEqual:self.contact]) {
         [NSObject performBlockOnMainThread:^{
             [self setData];

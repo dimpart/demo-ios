@@ -37,14 +37,6 @@
 
 #import "DIMApplicationContentProcessor.h"
 
-@interface DIMAppContentProcessor () {
-    
-    // module(s) for customized contents
-    id<DIMCustomizedContentHandler> _driftBottle;
-}
-
-@end
-
 @implementation DIMAppContentProcessor
 
 /* designated initializer */
@@ -52,26 +44,13 @@
                        messenger:(DIMMessenger *)transceiver {
     if (self = [super initWithFacebook:barrack messenger:transceiver]) {
         // modules
-        _driftBottle = [[DIMDriftBottleHandler alloc] initWithFacebook:barrack
-                                                             messenger:transceiver];
+        DIMDriftBottleHandler *driftBottle = [[DIMDriftBottleHandler alloc] initWithFacebook:barrack
+                                                                                   messenger:transceiver];
+        [self setContentHandler:driftBottle
+                      forModule:@"drift_bottle"
+                  inApplication:@"chat.dim.sechat"];
     }
     return self;
-}
-
-// override for your application
-- (id<DIMCustomizedContentHandler>)filterApplication:(NSString *)app
-                                          withModule:(NSString *)mod
-                                             content:(id<DKDCustomizedContent>)body
-                                            messasge:(id<DKDReliableMessage>)rMsg {
-    if ([app isEqualToString:@"chat.dim.sechat"] &&
-        [mod isEqualToString:@"drift_bottle"]) {
-        // App ID match
-        // customized module: "drift_bottle"
-        return _driftBottle;
-    }
-    // TODO: define your modules here
-    // ...
-    return [super filterApplication:app withModule:mod content:body messasge:rMsg];
 }
 
 @end

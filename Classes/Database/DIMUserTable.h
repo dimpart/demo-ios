@@ -57,9 +57,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMContactTable <DIMContactDBI>
 
-- (BOOL)addContact:(id<MKMID>)contact user:(id<MKMID>)user;
+- (BOOL)addContact:(id<MKMID>)contact forUser:(id<MKMID>)user;
 
-- (BOOL)removeContact:(id<MKMID>)contact user:(id<MKMID>)user;
+- (BOOL)removeContact:(id<MKMID>)contact forUser:(id<MKMID>)user;
 
 @end
 

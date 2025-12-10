@@ -16,144 +16,29 @@
 	<array>
 		<dict>
 			<key>ID</key>
-			<string>gsp-s002@wpjUWg1oYDnkHh74tHQFPxii6q9j3ymnyW</string>
+			<string>gsp-s109@rSWMVqbwTz4radJFrpfcYzQo9XibhZC7w</string>
 			<key>desc</key>
-			<string>dimchat-gz</string>
+			<string>SG-109</string>
 			<key>host</key>
-			<string>106.52.25.169</string>
+			<string>134.185.88.109</string>
 			<key>port</key>
-			<real>9394</real>
-			<key>meta</key>
-			<dict>
-				<key>version</key>
-				<integer>1</integer>
-				<key>seed</key>
-				<string>gsp-s002</string>
-				<key>key</key>
-				<dict>
-					<key>algorithm</key>
-					<string>RSA</string>
-					<key>data</key>
-					<string>-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDACQ1bmv8V3xSCvVDWy+6P4pOl
-46MkIdKEqZ3Z+kvIrpStO/y5DZMWzTRx1z1Ateibc+QCUREaLvKqECycyRNPO+aD
-04rT5WxZfSuHxf+PxajDQ1rcwImc0JR/PbkUIgD5kb2JrsSfTaEObsrhxKlgimey
-OG9bwcmSud6HzPkWZQIDAQAB
------END PUBLIC KEY-----
-</string>
-				</dict>
-				<key>fingerprint</key>
-				<string>Z1HI27oXMvY5oOpA1HaD+6d4t8/tlGty5XU+6+CIkeij5m8xS1C4vRJm3qaLTxSRsnwX6mMgkvxMAu6FfvDWe4/cisWAWt8E+aC7BrgESVanQyglWZLx0OSWDmV1jrE9Y0xAA3HlgxIoMdi3sQ4giV0NxeJHUymGenC+EsbtiUU=</string>
-			</dict>
-			<key>CA</key>
-			<dict/>
+			<integer>9394</integer>
 		</dict>
 		<dict>
 			<key>ID</key>
-			<string>gsp-s003@x2oNDzjDWbJMNDpCfKkU7dnHyJerd447Jh</string>
-			<key>desc</key>
-			<string>dimchat-prod</string>
+			<string>station@wnvnK2UoAsLfV92Lwrge9XASDSUVyB4etK</string>
 			<key>host</key>
-			<string>203.195.224.155</string>
+			<string>192.168.31.152</string>
 			<key>port</key>
 			<real>9394</real>
-			<key>meta</key>
-			<dict>
-				<key>version</key>
-				<integer>1</integer>
-				<key>seed</key>
-				<string>gsp-s003</string>
-				<key>key</key>
-				<dict>
-					<key>algorithm</key>
-					<string>RSA</string>
-					<key>data</key>
-					<string>-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC0nyRrAvwudsACDvufoyqQLtTV
-DaLQEzx92n1jmOswisUeNA53Fwso16zCKIADUm4Qtw2LuhYRnrKguJff2+tSG0kc
-CEwHhkDF8jY7ADgabtladbrIN9TEx3TOEvxlBU/LG5hirx8zruvNLpMqVgBP1kd6
-d5pf3uMcV9IUhIxYbwIDAQAB
------END PUBLIC KEY-----</string>
-					<key>mode</key>
-					<string>ECB</string>
-					<key>padding</key>
-					<string>PKCS1</string>
-					<key>digest</key>
-					<string>SHA256</string>
-				</dict>
-				<key>fingerprint</key>
-				<string>VGgVWWSzzkYEgYM14F6pCcxJj5jmZ5cepvmJC8i4gXNWWeG4V5/BQTKMhLX7hX1g3sikpWAkRgMFKttHGrIyEeDqGDtim1axVi70j9WZoPxKydbmCVtagxffJX2M9r4Et5e49I0jPHu+/2m9ep9QHTgKMyKjIfGSjLkZRGxWa0Y=</string>
-			</dict>
-			<key>CA</key>
-			<dict/>
 		</dict>
 		<dict>
 			<key>ID</key>
 			<string>gsp-s001@x5Zh9ixt8ECr59XLye1y5WWfaX4fcoaaSC</string>
-			<key>desc</key>
-			<string>localhost</string>
 			<key>host</key>
 			<string>127.0.0.1</string>
 			<key>port</key>
 			<integer>9394</integer>
-			<key>meta</key>
-			<dict>
-				<key>version</key>
-				<integer>1</integer>
-				<key>seed</key>
-				<string>gsp-s001</string>
-				<key>key</key>
-				<dict>
-					<key>algorithm</key>
-					<string>RSA</string>
-					<key>data</key>
-					<string>-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDET7fvLupUBUc6ImwJejColybq
-rU+Y6PwiCKhblGbwVqbvapD2A1hjEu4EtL6mm3v7hcgsO3Df33/ShRua6GW9/JQV
-DLfdznLfuTg8w5Ug+dysJfbrmB1G7nbqDYEyXQXNRWpQsLHYSD/ihaSKWNnOuV0c
-7ieJEzQAp++O+d3WUQIDAQAB
------END PUBLIC KEY-----
-</string>
-				</dict>
-				<key>fingerprint</key>
-				<string>R+Bv3RlVi8pNuVWDJ8uEp+N3l+B04ftlaNFxo7u8+V6eSQsQJNv7tfQNFdC633UpXDw3zZHvQNnkUBwthaCJTbEmy2CYqMSx/BLuaS7spkSZJJAT7++xqif+pRjdw9yM/aPufKHS4PAvGec21PsUpQzOV5TQFyF5CDEDVLC8HVY=</string>
-			</dict>
-			<key>CA</key>
-			<dict/>
-		</dict>
-		<dict>
-			<key>ID</key>
-			<string>gsp-s001@x5Zh9ixt8ECr59XLye1y5WWfaX4fcoaaSC</string>
-			<key>desc</key>
-			<string>dimchat-hk</string>
-			<key>host</key>
-			<string>124.156.108.150</string>
-			<key>port</key>
-			<real>9394</real>
-			<key>meta</key>
-			<dict>
-				<key>version</key>
-				<integer>1</integer>
-				<key>seed</key>
-				<string>gsp-s001</string>
-				<key>key</key>
-				<dict>
-					<key>algorithm</key>
-					<string>RSA</string>
-					<key>data</key>
-					<string>-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDET7fvLupUBUc6ImwJejColybq
-rU+Y6PwiCKhblGbwVqbvapD2A1hjEu4EtL6mm3v7hcgsO3Df33/ShRua6GW9/JQV
-DLfdznLfuTg8w5Ug+dysJfbrmB1G7nbqDYEyXQXNRWpQsLHYSD/ihaSKWNnOuV0c
-7ieJEzQAp++O+d3WUQIDAQAB
------END PUBLIC KEY-----
-</string>
-				</dict>
-				<key>fingerprint</key>
-				<string>R+Bv3RlVi8pNuVWDJ8uEp+N3l+B04ftlaNFxo7u8+V6eSQsQJNv7tfQNFdC633UpXDw3zZHvQNnkUBwthaCJTbEmy2CYqMSx/BLuaS7spkSZJJAT7++xqif+pRjdw9yM/aPufKHS4PAvGec21PsUpQzOV5TQFyF5CDEDVLC8HVY=</string>
-			</dict>
-			<key>CA</key>
-			<dict/>
 		</dict>
 	</array>
 </dict>

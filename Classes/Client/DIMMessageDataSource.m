@@ -74,7 +74,11 @@ OKSingletonImplementations(DIMMessageDataSource, sharedInstance)
 }
 
 - (void)onEntityUpdated:(NSNotification *)notification {
-    id ID = [notification.userInfo objectForKey:@"ID"];
+    NSDictionary *userInfo = [notification userInfo];
+    id ID = [userInfo objectForKey:@"ID"];
+    if (!ID) {
+        ID = [userInfo objectForKey:@"did"];
+    }
     NSAssert(ID, @"ID not found: %@", notification.userInfo);
     ID = MKMIDParse(ID);
     

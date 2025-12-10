@@ -105,12 +105,12 @@
     return _title;
 }
 
-- (nullable id<MKMID>)ID {
-    return MKMIDParse([self objectForKey:@"ID"]);
+- (nullable id<MKMID>)identifier {
+    return MKMIDParse([self objectForKey:@"did"]);
 }
 
-- (void)setID:(id<MKMID>)ID {
-    [self setObject:[ID string] forKey:@"ID"];
+- (void)setIdentifier:(id<MKMID>)ID {
+    [self setObject:[ID string] forKey:@"did"];
 }
 
 - (nullable NSData *)data {

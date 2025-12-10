@@ -84,6 +84,10 @@
     
     NSDictionary *userInfo = [o userInfo];
     id<MKMID> userID = [userInfo objectForKey:@"ID"];
+    if (!userID) {
+        userID = [userInfo objectForKey:@"did"];
+    }
+    
     id<MKMUser> user = [DIMGlobal facebook].currentUser;
     
     if([userID isEqual:user.identifier]){

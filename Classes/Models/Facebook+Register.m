@@ -29,7 +29,7 @@
     
     // 1. check & save meta
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
-    if ([archivist saveMeta:meta withIdentifier:ID]) {
+    if ([archivist saveMeta:meta forID:ID]) {
         NSLog(@"meta saved: %@", meta);
     } else {
         NSAssert(false, @"save meta failed: %@, %@", ID, meta);

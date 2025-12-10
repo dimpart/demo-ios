@@ -66,7 +66,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSLog(@"manage conversation: %@", _conversation.ID);
+    NSLog(@"manage conversation: %@", _conversation.identifier);
     
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc addObserver:self selector:@selector(onGroupMembersUpdated:)
@@ -79,7 +79,7 @@
     [NSObject performBlockOnMainThread:^{
         if ([name isEqual:kNotificationName_GroupMembersUpdated]) {
             id<MKMID> groupID = [info objectForKey:@"group"];
-            if ([groupID isEqual:self->_conversation.ID]) {
+            if ([groupID isEqual:self->_conversation.identifier]) {
                 // the same group
                 [self->_participantsCollectionViewController reloadData];
                 [self->_participantsCollectionViewController.collectionView reloadData];
@@ -114,7 +114,7 @@
             handler = ^(UIAlertAction *action) {
                 // clear message in conversation
                 MessageDatabase *msgDB = [MessageDatabase sharedInstance];
-                [msgDB clearConversation:self->_conversation.ID];
+                [msgDB clearConversation:self->_conversation.identifier];
                 
                 [self.navigationController popToRootViewControllerAnimated:YES];
             };
@@ -125,13 +125,13 @@
             NSString *format = NSLocalizedString(@"Are you sure to leave group %@ ?\nThis operation is unrecoverable!", nil);
             NSString *text = [NSString stringWithFormat:format, _conversation.name];
             
-            if (!MKMIDIsGroup(_conversation.ID)) {
-                NSAssert(false, @"current conversation is not a group chat: %@", _conversation.ID);
+            if (!MKMIDIsGroup(_conversation.identifier)) {
+                NSAssert(false, @"current conversation is not a group chat: %@", _conversation.identifier);
                 return ;
             }
-            id<MKMGroup> group = DIMGroupWithID(_conversation.ID);
-            DIMSharedFacebook *facebook = [DIMGlobal facebook];
-            id<MKMUser> user = [facebook currentUser];
+            id<MKMGroup> group = DIMGroupWithID(_conversation.identifier);
+            //DIMSharedFacebook *facebook = [DIMGlobal facebook];
+            //id<MKMUser> user = [facebook currentUser];
             
             void (^handler)(UIAlertAction *);
             handler = ^(UIAlertAction *action) {
@@ -141,7 +141,7 @@
                 
                 // clear message in conversation
                 MessageDatabase *msgDB = [MessageDatabase sharedInstance];
-                [msgDB removeConversation:self->_conversation.ID];
+                [msgDB removeConversation:self->_conversation.identifier];
                 
                 [self dismissViewControllerAnimated:YES completion:nil];
             };
@@ -153,9 +153,9 @@
         id<MKMUser> user = [facebook currentUser];
         
         NSString *sender = [[NSString alloc] initWithFormat:@"%@", user.identifier];
-        NSString *identifier = [[NSString alloc] initWithFormat:@"%@", _conversation.ID];
+        NSString *identifier = [[NSString alloc] initWithFormat:@"%@", _conversation.identifier];
         NSString *type = @"individual";
-        if (MKMIDIsGroup(_conversation.ID)) {
+        if (MKMIDIsGroup(_conversation.identifier)) {
             type = @"group";
         }
 
@@ -196,13 +196,13 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == SECTION_ACTIONS) {
         // other actions
-        if (!MKMIDIsGroup(_conversation.ID)) {
+        if (!MKMIDIsGroup(_conversation.identifier)) {
             return 1;
         }
         DIMSharedFacebook *facebook = [DIMGlobal facebook];
         id<MKMUser> user = [facebook currentUser];
         DIMSharedGroupManager *manager = [DIMSharedGroupManager sharedInstance];
-        if ([manager isOwner:user.identifier group:_conversation.ID]) {
+        if ([manager isOwner:user.identifier ofGroup:_conversation.identifier]) {
             return 1;
         }
     }
@@ -245,7 +245,7 @@
         NSString *value = nil;
         switch (row) {
             case 0: { // Name
-                if (MKMIDIsGroup(_conversation.ID)) {
+                if (MKMIDIsGroup(_conversation.identifier)) {
                     key = NSLocalizedString(@"Group name", nil);
                 } else {
                     key = NSLocalizedString(@"Nickname", nil);
@@ -255,18 +255,18 @@
                 break;
                 
             case 1: { // seed
-                if (MKMIDIsGroup(_conversation.ID)) {
+                if (MKMIDIsGroup(_conversation.identifier)) {
                     key = NSLocalizedString(@"Seed", nil);
                 } else {
                     key = NSLocalizedString(@"Username", nil);
                 }
-                value = _conversation.ID.name;
+                value = _conversation.identifier.name;
             }
                 break;
                 
             case 2: { // address
                 key = NSLocalizedString(@"Address", nil);
-                value = (NSString *)_conversation.ID.address;
+                value = (NSString *)_conversation.identifier.address;
             }
                 break;
                 
@@ -291,7 +291,8 @@
             muteCell.textLabel.textAlignment = NSTextAlignmentLeft;
             muteCell.textLabel.text = NSLocalizedString(@"Mute", @"title");
             muteCell.delegate = self;
-            muteCell.switchOn = [[LocalDatabaseManager sharedInstance] isConversation:self.conversation.ID forUser:user.identifier];
+            muteCell.switchOn = [[LocalDatabaseManager sharedInstance] isConversation:self.conversation.identifier
+                                                                              forUser:user.identifier];
             cell = muteCell;
         }
         
@@ -324,9 +325,9 @@
         id<MKMUser> user = [facebook currentUser];
         
         NSString *sender = [[NSString alloc] initWithFormat:@"%@", user.identifier];
-        NSString *identifier = [[NSString alloc] initWithFormat:@"%@", _conversation.ID];
+        NSString *identifier = [[NSString alloc] initWithFormat:@"%@", _conversation.identifier];
         NSString *type = @"individual";
-        if (MKMIDIsGroup(_conversation.ID)) {
+        if (MKMIDIsGroup(_conversation.identifier)) {
             type = @"group";
         }
         Client *client = [DIMGlobal terminal];
@@ -359,13 +360,13 @@
     NSMutableArray *newList = [[NSMutableArray alloc] initWithArray:currentList];
     
     if(on){
-        if(![newList containsObject:self.conversation.ID]){
-            [newList addObject:self.conversation.ID];
+        if(![newList containsObject:self.conversation.identifier]){
+            [newList addObject:self.conversation.identifier];
         }
-        [[LocalDatabaseManager sharedInstance] muteConversation:self.conversation.ID forUser:user.identifier];
+        [[LocalDatabaseManager sharedInstance] muteConversation:self.conversation.identifier forUser:user.identifier];
     }else{
-        [newList removeObject:self.conversation.ID];
-        [[LocalDatabaseManager sharedInstance] unmuteConversation:self.conversation.ID forUser:user.identifier];
+        [newList removeObject:self.conversation.identifier];
+        [[LocalDatabaseManager sharedInstance] unmuteConversation:self.conversation.identifier forUser:user.identifier];
     }
     DIMSharedMessenger *messenger = [DIMGlobal messenger];
     

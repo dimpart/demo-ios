@@ -241,7 +241,7 @@
 - (void)sendMetaToAudience {
     
     //Send Meta to audience
-    if (MKMIDIsUser(self.conversation.ID)) {
+    if (MKMIDIsUser(self.conversation.identifier)) {
         
         //Search whether has send message to this person
         NSUInteger i = 0;
@@ -270,7 +270,7 @@
             id<MKMID> ID = [user identifier];
             id<MKMVisa> visa = user.visa;
             id<DKDContent> content = DIMDocumentCommandResponse(ID, nil, @[visa]);
-            id<MKMID> receiverID = _conversation.ID;
+            id<MKMID> receiverID = _conversation.identifier;
             DIMSharedMessenger *messenger = [DIMGlobal messenger];
             [messenger sendContent:content
                             sender:ID
@@ -335,7 +335,7 @@
         _scrolledToBottom = YES;
     }
     
-    [[MessageDatabase sharedInstance] markConversationMessageRead:self.conversation.ID];
+    [[MessageDatabase sharedInstance] markConversationMessageRead:self.conversation.identifier];
 }
 
 - (void)onMessageInserted:(NSNotification *)notification {
@@ -344,11 +344,11 @@
     
     if ([name isEqual:kNotificationName_MessageInserted]) {
         id<MKMID> ID = MKMIDParse([info objectForKey:@"Conversation"]);
-        if ([_conversation.ID isEqual:ID]) {
+        if ([_conversation.identifier isEqual:ID]) {
             [NSObject performBlockOnMainThread:^{
                 [self groupMessage];
                 [self scrollAfterInsertNewMessage];
-                [[MessageDatabase sharedInstance] markConversationMessageRead:self.conversation.ID];
+                [[MessageDatabase sharedInstance] markConversationMessageRead:self.conversation.identifier];
             } waitUntilDone:NO];
         }
     }
@@ -360,7 +360,7 @@
     
     if ([name isEqual:kNotificationName_GroupMembersUpdated]) {
         id<MKMID> groupID = MKMIDParse([info objectForKey:@"group"]);
-        if ([_conversation.ID isEqual:groupID]) {
+        if ([_conversation.identifier isEqual:groupID]) {
             [NSObject performBlockOnMainThread:^{
                 self.navigationItem.title = self.conversation.title;
             } waitUntilDone:NO];
@@ -545,7 +545,7 @@
     }
 
     DIMConversation *chatBox = _conversation;
-    id<MKMID> receiver = chatBox.ID;
+    id<MKMID> receiver = chatBox.identifier;
     NSLog(@"send text: %@ -> %@", text, receiver);
     
     // create message content
@@ -590,7 +590,7 @@
 -(void)sendImage:(UIImage *)image{
     
     DIMConversation *chatBox = _conversation;
-    id<MKMID> receiver = chatBox.ID;
+    id<MKMID> receiver = chatBox.identifier;
     
     // 1. build message content
     if (image) {
@@ -667,7 +667,7 @@
     
     DIMCommand *guide = [[DIMCommand alloc] initWithCmd:@"guide"];
     id<MKMID> admin = MKMIDParse(@"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ");
-    id<DKDEnvelope> env = DKDEnvelopeCreate(admin, _conversation.ID, nil);
+    id<DKDEnvelope> env = DKDEnvelopeCreate(admin, _conversation.identifier, nil);
     id<DKDInstantMessage> guideMessage = DKDInstantMessageCreate(env, guide);
     
     [_messageArray addObject:guideMessage];
@@ -736,7 +736,7 @@
                 // command message
                 identifier = @"commandMsgCell";
             }
-        } else if ([sender isEqual:_conversation.ID]) {
+        } else if ([sender isEqual:_conversation.identifier]) {
             // message from conversation target
             identifier = @"receivedMsgCell";
         } else if ([sender isEqual:user.identifier]) {
@@ -894,7 +894,7 @@
     NSLog(@"End to record");
     [self.voiceTipsView removeFromSuperview];
     
-    id<MKMID> receiver = [_conversation ID];
+    id<MKMID> receiver = [_conversation identifier];
     
     [[EMAudioRecordHelper sharedHelper] stopRecordWithCompletion:^(NSString * _Nonnull aPath, NSInteger aTimeLength) {
         

@@ -3,7 +3,7 @@ use_frameworks!
 
 target 'Sechat' do
     #pod 'DIMClient', :path => '../../demo-objc'
-    pod 'DIMClient', '1.0.3'
+    pod 'DIMClient', '1.0.6'
 
     pod 'JCore', '2.7.1'
     pod 'JPush', '3.2.4-noidfa'
@@ -11,7 +11,7 @@ end
 
 target 'DIMTalk' do
     #pod 'DIMClient', :path => '../../demo-objc'
-    pod 'DIMClient', '1.0.3'
+    pod 'DIMClient', '1.0.6'
 
     pod 'JCore', '2.7.1'
     pod 'JPush', '3.2.4-noidfa'

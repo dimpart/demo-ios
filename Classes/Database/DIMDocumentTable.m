@@ -75,7 +75,7 @@
     return [dir stringByAppendingPathComponent:@"profile.plist"];
 }
 
-- (nullable id<MKMDocument>)documentForID:(id<MKMID>)ID withType:(nullable NSString *)type {
+- (nullable id<MKMDocument>)document:(id<MKMID>)ID forType:(nullable NSString *)type {
     // 1. try from memory cache
     id<MKMDocument> doc = [_caches objectForKey:ID];
     if (!doc) {
@@ -110,7 +110,7 @@
 }
 
 - (NSArray<id<MKMDocument>> *)documentsForID:(id<MKMID>)entity {
-    id<MKMDocument> doc = [self documentForID:entity withType:nil];
+    id<MKMDocument> doc = [self document:entity forType:nil];
     if (doc) {
         return @[doc];
     } else {

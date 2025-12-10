@@ -85,7 +85,7 @@
     return members;
 }
 
-- (BOOL)_saveMembers:(NSMutableArray *)members group:(id<MKMID>)group {
+- (BOOL)_saveMembers:(NSMutableArray *)members forGroup:(id<MKMID>)group {
     // update cache
     [_caches setObject:members forKey:group];
     
@@ -142,14 +142,14 @@
 }
 
 // Override
-- (BOOL)saveMembers:(NSArray *)members group:(id<MKMID>)group {
+- (BOOL)saveMembers:(NSArray *)members forGroup:(id<MKMID>)group {
     NSMutableArray *mArray;
     if ([members isKindOfClass:[NSMutableArray class]]) {
         mArray = (NSMutableArray *)members;
     } else {
         mArray = [members mutableCopy];
     }
-    return [self _saveMembers:mArray group:group];
+    return [self _saveMembers:mArray forGroup:group];
 }
 
 // Override
@@ -159,7 +159,7 @@
 }
 
 // Override
-- (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)gid {
+- (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots forGroup:(id<MKMID>)gid {
     NSLog(@"implement for save assistants");
     return NO;
 }
@@ -171,14 +171,14 @@
 }
 
 // Override
-- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins group:(id<MKMID>)gid {
+- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins forGroup:(id<MKMID>)gid {
     NSLog(@"implement for save administrators");
     return NO;
 }
 
 #pragma mark -
 
-- (BOOL)addMember:(id<MKMID>)member group:(id<MKMID>)group {
+- (BOOL)addMember:(id<MKMID>)member forGroup:(id<MKMID>)group {
     NSMutableArray<id<MKMID>> *allMembers = [self _loadMembers:group];
     NSInteger pos = [allMembers indexOfObject:member];
     if (pos != NSNotFound) {
@@ -186,10 +186,10 @@
         return NO;
     }
     [allMembers addObject:member];
-    return [self _saveMembers:allMembers group:group];
+    return [self _saveMembers:allMembers forGroup:group];
 }
 
-- (BOOL)removeMember:(id<MKMID>)member group:(id<MKMID>)group {
+- (BOOL)removeMember:(id<MKMID>)member forGroup:(id<MKMID>)group {
     NSMutableArray<id<MKMID>> *allMembers = [self _loadMembers:group];
     NSInteger pos = [allMembers indexOfObject:member];
     if (pos == NSNotFound) {
@@ -197,7 +197,7 @@
         return NO;
     }
     [allMembers removeObject:member];
-    return [self _saveMembers:allMembers group:group];
+    return [self _saveMembers:allMembers forGroup:group];
 }
 
 - (BOOL)removeGroup:(id<MKMID>)group {

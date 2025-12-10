@@ -97,7 +97,7 @@
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     
     // save meta for server ID
-    id<MKMID> ID = MKMIDParse([station objectForKey:@"ID"]);
+    id<MKMID> ID = MKMIDParse([station objectForKey:@"did"]);
     id<MKMMeta> meta = MKMMetaParse([station objectForKey:@"meta"]);
     
     if (meta) {
@@ -142,6 +142,9 @@
 - (void)_launchServiceProviderConfig:(NSDictionary *)config {
     
     id<MKMID> ID = MKMIDParse([config objectForKey:@"ID"]);
+    if (!ID) {
+        ID = MKMIDParse([config objectForKey:@"did"]);
+    }
     DIMServiceProvider *sp = [[DIMServiceProvider alloc] initWithID:ID];
     
     // choose the fast station
@@ -189,14 +192,14 @@
 
 - (void)didEnterBackground {
     DIMClientSession *session = [self session];
-    [self.messenger reportOffline:session.ID];
+    [self.messenger reportOffline:session.identifier];
     [session.station pause];
 }
 
 - (void)willEnterForeground {
     DIMClientSession *session = [self session];
     [session.station resume];
-    [self.messenger reportOnline:session.ID];
+    [self.messenger reportOnline:session.identifier];
 
     // clear icon badge
     UIApplication *app = [UIApplication sharedApplication];
@@ -269,7 +272,7 @@
 //    DIMSharedFacebook *facebook = [DIMGlobal facebook];
 //    id<MKMUser> user = [facebook currentUser];
 //    if (user != nil) {
-//        NSString *alias = user.ID.address;
+//        NSString *alias = user.identifier.address;
 //        [JPUSHService setAlias:alias completion:^(NSInteger iResCode, NSString *iAlias, NSInteger seq) {
 //            NSLog(@"Response code %zd", iResCode);
 //            NSLog(@"Response code %@", iAlias);

@@ -89,8 +89,8 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)user {
-    return [_contactTable saveContacts:contacts user:user];
+- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts forUser:(id<MKMID>)user {
+    return [_contactTable saveContacts:contacts forUser:user];
 }
 
 // Override
@@ -114,8 +114,8 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (BOOL)addContact:(id<MKMID>)contact user:(id<MKMID>)user {
-    BOOL OK = [_contactTable addContact:contact user:user];
+- (BOOL)addContact:(id<MKMID>)contact forUser:(id<MKMID>)user {
+    BOOL OK = [_contactTable addContact:contact forUser:user];
     if (OK) {
         // TODO: post notification 'ContactsUpdated'
     }
@@ -123,8 +123,8 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (BOOL)removeContact:(id<MKMID>)contact user:(id<MKMID>)user {
-    BOOL OK = [_contactTable removeContact:contact user:user];
+- (BOOL)removeContact:(id<MKMID>)contact forUser:(id<MKMID>)user {
+    BOOL OK = [_contactTable removeContact:contact forUser:user];
     if (OK) {
         // TODO: post notification 'ContactsUpdated'
     }
@@ -175,23 +175,23 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid {
-    bool OK = [_groupTable saveMembers:members group:gid];
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members forGroup:(id<MKMID>)gid {
+    bool OK = [_groupTable saveMembers:members forGroup:gid];
     if (OK) {
         // TODO: post notification 'MembersUpdated'
     }
     return OK;
 }
 
-// Override
-- (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
-    return [_groupTable assistantsOfGroup:group];
-}
-
-// Override
-- (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)gid {
-    return [_groupTable saveAssistants:bots group:gid];
-}
+//// Override
+//- (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
+//    return [_groupTable assistantsOfGroup:group];
+//}
+//
+//// Override
+//- (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots forGroup:(id<MKMID>)gid {
+//    return [_groupTable saveAssistants:bots forGroup:gid];
+//}
 
 // Override
 - (NSArray<id<MKMID>> *)administratorsOfGroup:(id<MKMID>)group {
@@ -199,21 +199,21 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins group:(id<MKMID>)gid {
-    return [_groupTable saveAdministrators:admins group:gid];
+- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins forGroup:(id<MKMID>)gid {
+    return [_groupTable saveAdministrators:admins forGroup:gid];
 }
 
 // Override
-- (BOOL)addMember:(id<MKMID>)member group:(id<MKMID>)group {
-    BOOL OK = [_groupTable addMember:member group:group];
+- (BOOL)addMember:(id<MKMID>)member forGroup:(id<MKMID>)group {
+    BOOL OK = [_groupTable addMember:member forGroup:group];
     if (OK) {
         // TODO: post notification 'MembersUpdated'
     }
     return OK;
 }
 
-- (BOOL)removeMember:(id<MKMID>)member group:(id<MKMID>)group {
-    BOOL OK = [_groupTable removeMember:member group:group];
+- (BOOL)removeMember:(id<MKMID>)member forGroup:(id<MKMID>)group {
+    BOOL OK = [_groupTable removeMember:member forGroup:group];
     if (OK) {
         // TODO: post notification 'MembersUpdated'
     }
@@ -235,7 +235,7 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 // Override
 - (BOOL)saveGroupHistory:(id<DKDGroupCommand>)content
              withMessage:(id<DKDReliableMessage>)rMsg
-                   group:(id<MKMID>)gid {
+                forGroup:(id<MKMID>)gid {
     return NO;
 }
 
@@ -319,7 +319,7 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 // Override
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)entity {
     BOOL OK;
-    if ([DIMMetaUtils meta:meta matchIdentifier:entity]) {
+    if ([DIMMetaUtils meta:meta matchID:entity]) {
         OK = [_metaTable saveMeta:meta forID:entity];
     } else {
         NSAssert(false, @"meta not match: %@ => %@", entity, meta);
@@ -332,8 +332,8 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (id<MKMDocument>)documentForID:(id<MKMID>)entity withType:(nullable NSString *)type {
-    return [_documentTable documentForID:entity withType:type];
+- (id<MKMDocument>)document:(id<MKMID>)entity forType:(nullable NSString *)type {
+    return [_documentTable document:entity forType:type];
 }
 
 // Override
@@ -413,13 +413,13 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 //
 
 // Override
-- (OKPair<id<DKDLoginCommand>,id<DKDReliableMessage>> *)loginCommandMessageForID:(id<MKMID>)user {
+- (OKPair<id<DKDLoginCommand>,id<DKDReliableMessage>> *)loginCommandMessageForUser:(id<MKMID>)user {
     // TODO: login table
     return nil;
 }
 
 // Override
-- (BOOL)saveLoginCommand:(id<DKDLoginCommand>)cmd withMessage:(id<DKDReliableMessage>)msg forID:(id<MKMID>)user {
+- (BOOL)saveLoginCommand:(id<DKDLoginCommand>)cmd withMessage:(id<DKDReliableMessage>)msg forUser:(id<MKMID>)user {
     // TODO: login table
     return NO;
 }

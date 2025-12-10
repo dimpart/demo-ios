@@ -47,8 +47,8 @@
     for (NSString *item in contacts) {
         ID = MKMIDParse(item);
         // request contact/group meta and save to local
-        [facebook meta:ID];
-        [facebook addContact:ID user:user.identifier];
+        [facebook metaForID:ID];
+        [facebook addContact:ID forUser:user.identifier];
     }
     // no need to respond this command
     return nil;
@@ -69,8 +69,8 @@
 
 - (NSArray<id<DKDContent>> *)processContactsCommand:(DIMStorageCommand *)content sender:(id<MKMID>)sender {
     id<MKMUser> user = [self.facebook currentUser];
-    if (![user.identifier isEqual:content.ID]) {
-        NSAssert(false, @"current user %@ not match %@ contacts not saved", user, content.ID);
+    if (![user.identifier isEqual:content.identifier]) {
+        NSAssert(false, @"current user %@ not match %@ contacts not saved", user, content.identifier);
         return nil;
     }
     

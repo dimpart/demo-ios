@@ -96,7 +96,8 @@ typedef NSMutableArray<id<MKMID>> UserList;
 - (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
     UserList *contacts = [_userContacts objectForKey:user];
     if (!contacts) {
-        contacts = (UserList *)[self.archivist contactsOfUser:user];
+        id<DIMAccountDBI> db = [self.archivist database];
+        contacts = (UserList *)[db contactsOfUser:user];
         if (!contacts) {
             // placeholder
             contacts = [[NSMutableArray alloc] init];
@@ -178,9 +179,9 @@ typedef NSMutableArray<id<MKMID>> UserList;
     }
 }
 
-- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)user {
+- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts forUser:(id<MKMID>)user {
     id<DIMAccountDBI> db = [self.archivist database];
-    if ([db saveContacts:contacts user:user]) {
+    if ([db saveContacts:contacts forUser:user]) {
         // erase cache for reload
         [_userContacts removeObjectForKey:user];
         return YES;
@@ -189,7 +190,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
     }
 }
 
-- (BOOL)addContact:(id<MKMID>)contact user:(id<MKMID>)user {
+- (BOOL)addContact:(id<MKMID>)contact forUser:(id<MKMID>)user {
     UserList *allContacts = (UserList *)[self contactsOfUser:user];
     NSAssert(allContacts, @"allContacts would not be nil here: %@", user);
     NSInteger pos = [allContacts indexOfObject:contact];
@@ -198,10 +199,10 @@ typedef NSMutableArray<id<MKMID>> UserList;
         return NO;
     }
     [allContacts addObject:contact];
-    return [self saveContacts:allContacts user:user];
+    return [self saveContacts:allContacts forUser:user];
 }
 
-- (BOOL)removeContact:(id<MKMID>)contact user:(id<MKMID>)user {
+- (BOOL)removeContact:(id<MKMID>)contact forUser:(id<MKMID>)user {
     UserList *allContacts = (UserList *)[self contactsOfUser:user];
     NSAssert(allContacts, @"allContacts would not be nil here: %@", user);
     NSInteger pos = [allContacts indexOfObject:contact];
@@ -210,7 +211,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
         return NO;
     }
     [allContacts removeObjectAtIndex:pos];
-    return [self saveContacts:allContacts user:user];
+    return [self saveContacts:allContacts forUser:user];
 }
 
 @end

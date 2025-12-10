@@ -57,15 +57,15 @@ static inline BOOL check_username(NSString *username) {
     id<MKMUser> user = [facebook currentUser];
     
     // 1. group info
-    if (MKMIDIsGroup(_conversation.ID)) {
+    if (MKMIDIsGroup(_conversation.identifier)) {
         // exists group
-        _group = (DIMGroup *)DIMGroupWithID(_conversation.ID);
+        _group = (DIMGroup *)DIMGroupWithID(_conversation.identifier);
         _founder = _group.founder;
         // Notice: the group member list will/will not include the founder
         _memberList = _group.members;
         
         // 1.1. logo
-        NSString *name = DIMNameForID(_conversation.ID);
+        NSString *name = DIMNameForID(_conversation.identifier);
         DIMBulletin *profile = (DIMBulletin *)[_group bulletin];
         UIImage *logoImage = [profile logoImageWithSize:_logoImageView.bounds.size];
         if (logoImage) {
@@ -81,7 +81,7 @@ static inline BOOL check_username(NSString *username) {
         
         // 1.2. name
         _nameTextField.text = name;
-        if (![manager isOwner:user.identifier group:_group.identifier]) {
+        if (![manager isOwner:user.identifier ofGroup:_group.identifier]) {
             _nameTextField.enabled = NO;
         }
         
@@ -93,7 +93,7 @@ static inline BOOL check_username(NSString *username) {
         _group = nil;
         _founder = [user identifier];
         // Notice: the group member list will/will not include the founder
-        _memberList = [[NSArray alloc] initWithObjects:_conversation.ID, nil];
+        _memberList = [[NSArray alloc] initWithObjects:_conversation.identifier, nil];
         
         // 1.1. logo
         [_logoImageView setText:@"[Đ]"];
@@ -116,9 +116,9 @@ static inline BOOL check_username(NSString *username) {
     if (_founder && ![_founder isEqual:user.identifier]) {
         [_selectedList addObject:_founder];
     }
-    if (!_group && MKMIDIsUser(_conversation.ID)) {
-        if (![_selectedList containsObject:_conversation.ID]) {
-            [_selectedList addObject:_conversation.ID];
+    if (!_group && MKMIDIsUser(_conversation.identifier)) {
+        if (![_selectedList containsObject:_conversation.identifier]) {
+            [_selectedList addObject:_conversation.identifier];
         }
     }
     if (_memberList.count > 0) {
@@ -197,7 +197,7 @@ static inline BOOL check_username(NSString *username) {
     id<MKSignKey> signKey = [dataSource privateKeyForVisaSignature:user.identifier];
     NSAssert(signKey, @"failed to get visa sign key for user: %@", user);
 
-//    id<MKMID> ID = _conversation.ID;
+//    id<MKMID> ID = _conversation.identifier;
 //    NSString *seed = _seedTextField.text;
 //    NSString *name = _nameTextField.text;
 //    id<MKMDocument> profile;
@@ -229,7 +229,7 @@ static inline BOOL check_username(NSString *username) {
 //            [self showMessage:[NSString stringWithFormat:@"%@\n%@", name, seed] withTitle:NSLocalizedString(@"Create Group Failed!", nil)];
 //            return NO;
 //        }
-//        ID = _group.ID;
+//        ID = _group.identifier;
 //        profile = MKMDocumentNew(MKMDocument_Bulletin, ID);
 //        [profile setName:name];
 //        [profile sign:signKey];
@@ -239,7 +239,7 @@ static inline BOOL check_username(NSString *username) {
 //    // save profile & members
 //    DIMFacebook *facebook = [DIMFacebook sharedInstance];
 //    [facebook saveDocument:profile];
-//    [facebook saveMembers:_selectedList group:_group.ID];
+//    [facebook saveMembers:_selectedList forGroup:_group.identifier];
     return YES;
 }
 
@@ -431,14 +431,14 @@ static inline BOOL check_username(NSString *username) {
         cell.participant = contact;
         
         DIMSharedGroupManager *manager = [DIMSharedGroupManager sharedInstance];
-        if (_group && ![manager isOwner:user.identifier group:_group.identifier] &&
+        if (_group && ![manager isOwner:user.identifier ofGroup:_group.identifier] &&
             [_memberList containsObject:contact]) {
             // fixed
             [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             cell.userInteractionEnabled = NO;
         } else if ([contact isEqual:_founder] ||
-                   [manager isOwner:contact group:_group.identifier] ||
+                   [manager isOwner:contact ofGroup:_group.identifier] ||
                    [contact isEqual:user.identifier]) {
             // fixed
             [tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];

@@ -37,12 +37,12 @@
 - (void)reloadData {
     _participants = [[NSMutableArray alloc] init];
     
-    if (MKMIDIsUser(_conversation.ID)) {
+    if (MKMIDIsUser(_conversation.identifier)) {
         // personal conversation
-        [_participants addObject:_conversation.ID];
-    } else if (MKMIDIsGroup(_conversation.ID)) {
+        [_participants addObject:_conversation.identifier];
+    } else if (MKMIDIsGroup(_conversation.identifier)) {
         // group conversation
-        id<MKMGroup> group = DIMGroupWithID(_conversation.ID);
+        id<MKMGroup> group = DIMGroupWithID(_conversation.identifier);
         [_participants addObjectsFromArray:group.members];
     }
 }
