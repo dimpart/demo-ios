@@ -66,7 +66,7 @@ static inline BOOL check_username(NSString *username) {
         
         // 1.1. logo
         NSString *name = DIMNameForID(_conversation.identifier);
-        DIMBulletin *profile = (DIMBulletin *)[_group bulletin];
+        DIMBulletin *profile = [DIMDocumentUtils lastBulletin:[_group documents]];
         UIImage *logoImage = [profile logoImageWithSize:_logoImageView.bounds.size];
         if (logoImage) {
             [_logoImageView setImage:logoImage];

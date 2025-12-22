@@ -29,7 +29,8 @@
     if (url) {
         if ([url containsString:@"://"]) {
             DIMSharedFacebook *facebook = [DIMGlobal facebook];
-            image = [facebook loadAvatarWithURL:url forID:self.identifier];
+            id<MKMID> ID = MKMIDParse([self objectForKey:@"did"]);
+            image = [facebook loadAvatarWithURL:url forID:ID];
         } else {
             image = [UIImage imageNamed:url];
         }
@@ -62,7 +63,8 @@
 //        }
         
         // create image with members' avatar(s)
-        NSArray<id<MKMID>> *members = DIMGroupWithID(self.identifier).members;
+        id<MKMID> ID = MKMIDParse([self objectForKey:@"did"]);
+        NSArray<id<MKMID>> *members = DIMGroupWithID(ID).members;
         if (members.count > 0) {
             CGSize tileSize;
             if (members.count > 4) {
@@ -91,7 +93,8 @@
         // create image with first character of name
         NSString *name = self.name;
         if (name.length == 0) {
-            name = self.identifier.name;
+            id<MKMID> ID = MKMIDParse([self objectForKey:@"did"]);
+            name = ID.name;
             if (name.length == 0) {
                 name = @"Đ"; // BTC Address: ฿
             }

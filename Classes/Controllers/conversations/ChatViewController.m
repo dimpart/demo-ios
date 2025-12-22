@@ -268,7 +268,7 @@
             
             //Send profile command to audience
             id<MKMID> ID = [user identifier];
-            id<MKMVisa> visa = user.visa;
+            id<MKMVisa> visa = [DIMDocumentUtils lastVisa:[user documents]];
             id<DKDContent> content = DIMDocumentCommandResponse(ID, nil, @[visa]);
             id<MKMID> receiverID = _conversation.identifier;
             DIMSharedMessenger *messenger = [DIMGlobal messenger];

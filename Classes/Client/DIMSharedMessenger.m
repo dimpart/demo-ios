@@ -176,7 +176,7 @@
         NSAssert(false, @"login first");
         return NO;
     }
-    id<MKMID> ID = [doc identifier];
+    id<MKMID> ID = MKMIDParse([doc objectForKey:@"did"]);
     if (![user.identifier isEqual:ID]) {
         NSAssert(false, @"visa document error: %@", doc);
         return NO;
@@ -195,7 +195,7 @@
 }
 
 - (BOOL)postDocument:(id<MKMDocument>)doc withMeta:(id<MKMMeta>)meta {
-    id<MKMID> ID = [doc identifier];
+    id<MKMID> ID = MKMIDParse([doc objectForKey:@"did"]);
     id<DKDCommand> cmd = [[DIMDocumentCommand alloc] initWithID:ID
                                                            meta:meta
                                                       documents:@[doc]];
@@ -214,7 +214,9 @@
     data = [password encrypt:data extra:cmd.dictionary];
     // 3. encrypt key
     NSData *key = MKUTF8Encode(MKJsonEncode(password.dictionary));
-    key = [user encrypt:key];
+    NSDictionary<NSString *, NSData *> *results = [user encrypt:key];
+    // FIXME: for each key data in results
+    key = [results.objectEnumerator nextObject];
     // 4. pack 'storage' command
     [cmd setIdentifier:user.identifier];
     [cmd setData:data];

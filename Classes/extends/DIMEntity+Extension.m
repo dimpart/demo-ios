@@ -76,7 +76,7 @@
             [mDict setObject:ID forKey:@"did"];
         }
         profile = MKMDocumentParse(profile);
-        [facebook.archivist saveDocument:profile];
+        [facebook.archivist saveDocument:profile forID:ID];
     }
     
     return user;

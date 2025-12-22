@@ -202,7 +202,7 @@
     id<MKMUser> user = facebook.currentUser;
     id<MKMID> ID = user.identifier;
     
-    id<MKMVisa> visa = user.visa;
+    id<MKMVisa> visa = [DIMDocumentUtils lastVisa:[user documents]];
     
     if (self.imageData != nil) {
         
@@ -222,11 +222,11 @@
     [visa setName:self.nickname];
     
     id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
-    id<MKSignKey> SK = [dataSource privateKeyForVisaSignature:user.identifier];
-    NSAssert(SK, @"failed to get visa sign key for user: %@", user.identifier);
+    id<MKSignKey> SK = [dataSource privateKeyForVisaSignature:ID];
+    NSAssert(SK, @"failed to get visa sign key for user: %@", ID);
     [visa sign:SK];
     
-    [facebook.archivist saveDocument:visa];
+    [facebook.archivist saveDocument:visa forID:ID];
     
     // submit to station
     DIMSharedMessenger *messenger = [DIMGlobal messenger];

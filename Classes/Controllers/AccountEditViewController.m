@@ -100,7 +100,7 @@
     
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     id<MKMUser> user = [facebook currentUser];
-    DIMVisa *profile = (DIMVisa *)[user visa];
+    DIMVisa *profile = [DIMDocumentUtils lastVisa:[user documents]];
     
     CGSize avatarSize = _avatarImageView.bounds.size;
     
@@ -127,7 +127,8 @@
     
     DIMVisa *profile = [notification.userInfo objectForKey:@"profile"];
     id<MKMUser> user = [DIMGlobal facebook].currentUser;
-    if (![profile.identifier isEqual:user.identifier]) {
+    id<MKMID> ID = MKMIDParse([profile objectForKey:@"did"]);
+    if (![ID isEqual:user.identifier]) {
         // not my profile
         return ;
     }
@@ -197,7 +198,7 @@
         DIMSharedFacebook *facebook = [DIMGlobal facebook];
         id<MKMUser> user = [facebook currentUser];
         id<MKMID> ID = user.identifier;
-        id<MKMVisa> visa = user.visa;
+        id<MKMVisa> visa = [DIMDocumentUtils lastVisa:[user documents]];
         if (!visa) {
             NSAssert(false, @"profile should not be empty");
             return ;
@@ -219,7 +220,7 @@
         [visa sign:SK];
         
         // save profile with new avatar
-        [facebook.archivist saveDocument:visa];
+        [facebook.archivist saveDocument:visa forID:ID];
         
         // submit to network
         DIMSharedMessenger *messenger = [DIMGlobal messenger];
@@ -227,7 +228,7 @@
         
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc postNotificationName:kNotificationName_AvatarUpdated object:self
-                        userInfo:@{@"ID": visa.identifier, @"profile": visa}];
+                        userInfo:@{@"ID": ID, @"profile": visa}];
     }
 }
 
@@ -246,7 +247,7 @@
     DIMSharedFacebook *facebook = [DIMGlobal facebook];
     id<MKMUser> user = [facebook currentUser];
     
-    id<MKMVisa> visa = user.visa;
+    id<MKMVisa> visa = [DIMDocumentUtils lastVisa:[user documents]];
     [visa setName:nickname];
     
     id<MKMUserDataSource> dataSource = (id<MKMUserDataSource>)[user dataSource];
@@ -254,7 +255,7 @@
     NSAssert(SK, @"failed to get visa sign key for user: %@", user.identifier);
     [visa sign:SK];
     
-    [facebook.archivist saveDocument:visa];
+    [facebook.archivist saveDocument:visa forID:user.identifier];
     DIMSharedMessenger *messenger = [DIMGlobal messenger];
     
     // submit to station

@@ -42,6 +42,12 @@
 #import "DIMConstants.h"
 #import "DIMDocumentTable.h"
 
+@interface DIMCompatible (Hacking)
+
++ (void)fixDid:(NSMutableDictionary *)content;
+
+@end
+
 @interface DIMDocumentTable () {
     
     NSMutableDictionary<id<MKMID>, id<MKMDocument>> *_caches;
@@ -57,7 +63,8 @@
     if (self = [super init]) {
         _caches = [[NSMutableDictionary alloc] init];
         
-        _empty = [[DIMDocument alloc] initWithID:MKMAnyone type:MKMDocumentType_Profile];
+        _empty = [[DIMDocument alloc] initWithType:MKMDocumentType_Profile];
+        [_empty setString:MKMAnyone forKey:@"did"];
     }
     return self;
 }
@@ -83,17 +90,25 @@
         NSString *path = [self _filePathWithID:ID];
         NSDictionary *dict = [DIMStorage dictionaryWithContentsOfFile:path];
         if (dict) {
+            NSMutableDictionary *mDict = [dict mutableCopy];
+            [DIMCompatible fixDid:mDict];
+            dict = mDict;
+        }
+        if (dict) {
             NSLog(@"document from: %@", path);
             if ([type length] == 0 || [type isEqualToString:@"*"]) {
-                type = [dict objectForKey:@"type"];
-                if ([type length] == 0) {
-                    type = @"*";
-                }
+                MKMSharedAccountExtensions *ext = [MKMSharedAccountExtensions sharedInstance];
+                type = [ext.helper getDocumentType:dict defaultValue:nil];
+                //type = [dict objectForKey:@"type"];
+                //if ([type length] == 0) {
+                //    type = @"*";
+                //}
             }
             NSString *data = [dict objectForKey:@"data"];
             NSString *signature = [dict objectForKey:@"signature"];
             id<MKTransportableData> ted = MKTransportableDataParse(signature);
-            doc = MKMDocumentCreate(type, ID, data, ted);
+            doc = MKMDocumentCreate(type, data, ted);
+            [doc setString:ID forKey:@"did"];
         }
         if (!doc) {
             // 2.1. place an empty meta for cache
@@ -118,12 +133,11 @@
     }
 }
 
-- (BOOL)saveDocument:(id<MKMDocument>)doc {
+- (BOOL)saveDocument:(id<MKMDocument>)doc forID:(id<MKMID>)ID {
     if (!doc.isValid) {
         NSLog(@"document not valid: %@", doc);
         return NO;
     }
-    id<MKMID> ID = doc.identifier;
     // 1. store into memory cache
     [_caches setObject:doc forKey:ID];
     // 2. save into database

@@ -342,13 +342,13 @@ static inline id<MKPrivateKey> private_load(NSString *type, id<MKMID> ID) {
 }
 
 // Override
-- (BOOL)saveDocument:(id<MKMDocument>)doc {
-    id<MKMID> ID = [doc identifier];
+- (BOOL)saveDocument:(id<MKMDocument>)doc forID:(id<MKMID>)ID {
+    //id<MKMID> ID = MKMIDParse([doc objectForKey:@"did"]);
     id<MKMMeta> meta = [self metaForID:ID];
     NSAssert(meta, @"meta not exists: %@", ID);
     BOOL OK;
     if ([doc isValid] || [doc verify:meta.publicKey]) {
-        OK = [_documentTable saveDocument:doc];
+        OK = [_documentTable saveDocument:doc forID:ID];
     } else {
         NSAssert(false, @"document error: %@", doc);
         return NO;

@@ -75,7 +75,8 @@
     
     id<MKMDocument> profile = [notification.userInfo objectForKey:@"profile"];
     id<MKMUser> user = [DIMGlobal facebook].currentUser;
-    if ([profile.identifier isEqual:user.identifier]) {
+    id<MKMID> did = MKMIDParse([profile objectForKey:@"did"]);
+    if ([did isEqual:user.identifier]) {
         [self reloadData];
     }
 }
@@ -101,7 +102,7 @@
         id<MKMUser> user = [facebook currentUser];
         
         CGRect avatarFrame = self.avatarImageView.frame;
-        DIMVisa *profile = (DIMVisa *)[user visa];
+        DIMVisa *profile = [DIMDocumentUtils lastVisa:[user documents]];
         UIImage *image = [profile avatarImageWithSize:avatarFrame.size];
         [self.avatarImageView setImage:image];
         self.nameLabel.text = DIMNameForID(user.identifier);

@@ -185,7 +185,7 @@
     NSDictionary *profileData = [[NSDictionary alloc] initWithContentsOfFile:path];
     id<MKMDocument> profile = MKMDocumentParse(profileData);
     if (profile) {
-        [facebook.archivist saveDocument:profile];
+        [facebook.archivist saveDocument:profile forID:ID];
     }
 }
 
