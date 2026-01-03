@@ -214,9 +214,9 @@
     data = [password encrypt:data extra:cmd.dictionary];
     // 3. encrypt key
     NSData *key = MKUTF8Encode(MKJsonEncode(password.dictionary));
-    NSDictionary<NSString *, NSData *> *results = [user encrypt:key];
+    id<DIMEncryptedBundle> bundle = [user encryptBundle:key];
     // FIXME: for each key data in results
-    key = [results.objectEnumerator nextObject];
+    key = [bundle.values anyObject];
     // 4. pack 'storage' command
     [cmd setIdentifier:user.identifier];
     [cmd setData:data];

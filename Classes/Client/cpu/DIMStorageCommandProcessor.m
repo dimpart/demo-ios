@@ -56,7 +56,9 @@
 
 - (NSArray<id<DKDContent>> *)decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(id<MKMUser>)user {
     // decrypt key
-    key = [user decrypt:key];
+    DIMEncryptedBundle *bundle = [[DIMEncryptedBundle alloc] init];
+    [bundle setData:key forTerminal:@"*"];
+    key = [user decryptBundle:bundle];
     id dict = MKJsonDecode(MKUTF8Decode(key));
     id<MKSymmetricKey> password = MKSymmetricKeyParse(dict);
     // decrypt data
